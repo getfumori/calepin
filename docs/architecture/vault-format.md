@@ -91,9 +91,17 @@ do not recur in the first release.
 
 ### F9. Occurrence records
 
-Each completed or skipped Occurrence appends an `occurrence` block to the
-recurring Task's body under its history heading. The block, not the
-heading, is the authority.
+Each completed or skipped Occurrence appends an `occurrence` block at the
+end of the recurring Task's `## History` section, creating the section when
+it is missing. The block, not the heading, is the authority. Its id is the
+Occurrence id, and its metadata records `original`, `scheduled` (the date
+it was planned for when acted on, used by undo), `outcome` (`completed` or
+`skipped`), and `at`.
+
+Recurrence fields are `basis` (`schedule` or `completion`), `frequency`
+(`daily`, `weekly`, or `monthly`), `interval` (at least 1), optional
+`weekdays` (`sun` to `sat`) for weekly rules, and optional `day` (1 to 31)
+for monthly rules, which defaults to the day of the first Occurrence.
 
 ### F10. Placement
 
@@ -200,7 +208,7 @@ task:
 
 ## History
 
-<!-- fumori:occurrence {"id":"o_01J9P7M3D5XC","original":"2026-11-01","outcome":"completed","at":"2026-11-02T09:30:00-08:00"} -->
+<!-- fumori:occurrence {"id":"o_01J9P7M3D5XC","original":"2026-11-01","scheduled":"2026-11-01","outcome":"completed","at":"2026-11-02T09:30:00-08:00"} -->
 ### 2026-11-02
 
 No time on Sunday; did it Monday. Backups fine, pruned old images.
@@ -277,7 +285,8 @@ and creates the next Occurrence:
 
 Other rules:
 
-- Monthly dates beyond a month's length clamp to its last day.
+- Monthly dates beyond a month's length clamp to its last day; the rule's
+  `day` keeps later months on the intended day.
 - An Occurrence is overdue when `scheduled` is before the local today; it
   stays visible until acted on.
 - Resuming a paused Task reschedules the current Occurrence to the first rule

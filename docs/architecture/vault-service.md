@@ -232,8 +232,33 @@ the Web client's hand-written contracts and keeps Go and TypeScript in step
 5. Task commands with recurrence, end to end through the API.
 6. Connecting the Web client.
 
-The acceptance scenarios become integration tests against a real temporary Git repository: unknown fields preserved, capture
-in the right Daily Note, cross-day comments, Unlisted Task assignment, late
-completion of a recurring Task, duplicate completion requests, stale writes,
-markers inside code blocks, index rebuild equality, broken files, crash after
-save, mixed Chinese search, and Memo extraction.
+The acceptance scenarios become integration tests against a real temporary
+Git repository: unknown fields preserved, capture in the right Daily Note,
+cross-day comments, Unlisted Task assignment, late completion of a recurring
+Task, duplicate completion requests, stale writes, markers inside code
+blocks, index rebuild equality, broken files, crash after save, mixed
+Chinese search, and Memo extraction.
+
+## Implementation notes
+
+The first slice simplifies this design in four places. Each keeps the
+design's guarantees and can be replaced without a format change.
+
+- **One Vault-wide write lock** replaces per-object locks and the separate
+  barrier. Writes are serial; reads take a shared lock.
+- **The structured projection lives in memory.** Notes, links, Tasks, and
+  Memos are rebuilt from the repository at startup. SQLite holds only the
+  full-text Search index, so `GET /tasks` and views read the in-memory
+  projection.
+- **Write intents are recorded only for commands that carry an
+  Idempotency-Key.** Editor saves are already safe to retry through their
+  base revision, and a crash before the index update is repaired by the
+  startup content-hash sync.
+- **The HTTP contract is the Web client's zod schemas** in
+  `src/web/contracts/`, checked against the Go server by
+  `e2e/contracts.spec.ts`. The OpenAPI document and code generation remain
+  open.
+
+The binary embeds every gse dictionary even though only `zh_s` is loaded,
+which makes it about 50 MB. Slimming it with gse's `ne` build tag and an
+application-owned embed is open.

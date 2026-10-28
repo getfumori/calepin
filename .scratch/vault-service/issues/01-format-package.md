@@ -1,6 +1,6 @@
 # 01: Vault format package
 
-Status: open
+Status: resolved
 Type: task
 Blocked by: none
 
@@ -41,3 +41,7 @@ Vault format v1, with no file system access.
   unchanged.
 - A marker inside a fenced code block produces no Memo, Task, or comment.
 - Diagnostics are covered by one table-driven test.
+
+## Comments
+
+Done in `internal/format`. Fixture tests read `docs/architecture/vault-format.md` directly, so the document and parser stay in step.

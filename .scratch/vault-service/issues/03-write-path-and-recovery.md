@@ -1,6 +1,6 @@
 # 03: Write path, recovery, and checkpoints
 
-Status: open
+Status: resolved
 Type: task
 Blocked by: 02
 
@@ -41,3 +41,7 @@ through minimal note and Daily Note endpoints.
   renamed state.
 - Editing an unknown frontmatter field through `PUT` with metadata leaves the
   rest of the file byte-identical.
+
+## Comments
+
+Done in `internal/vault`. Simplifications are listed under Implementation notes in vault-service.md. There is no `fumori checkpoint` CLI command; `POST /api/v1/checkpoint` covers manual checkpoints. Crash tests go red under mutation.

@@ -32,3 +32,7 @@ the binary.
 - Changing the OpenAPI document without regenerating fails CI.
 - The binary listens on `127.0.0.1` by default and warns when bound
   elsewhere, since the service has no authentication of its own.
+
+## Comments
+
+The Web client runs on the Go API, is embedded in the binary, and has a Memo stream with quick capture on Today. `e2e/contracts.spec.ts` checks every GET response against the zod contracts, and `e2e/journey.spec.ts` covers the main journey. Open: the OpenAPI document and code generation.

@@ -1,6 +1,6 @@
 # 05: Tasks and capture through the API
 
-Status: open
+Status: resolved
 Type: task
 Blocked by: 04
 
@@ -41,3 +41,7 @@ exposed by the API.
 - Assigning a Task List to an Unlisted Task changes only the `task.list`
   field.
 - Clock and time zone are injected; one test covers a midnight boundary.
+
+## Comments
+
+Done. Recurrence is in `internal/domain`, commands in `internal/vault/tasks.go`, routes in `internal/api/commands.go`. Monthly rules gained a `day` field so month-end rules do not drift. Today context has no dedicated endpoint; `/tasks` with Today's date covers it.

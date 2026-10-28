@@ -145,3 +145,9 @@ vite.config.ts.timestamp-*
 # Browser test output
 playwright-report/
 test-results/
+
+# Local agent artifacts and Go build output
+.audit/
+bin/
+internal/webassets/dist/*
+!internal/webassets/dist/.keep

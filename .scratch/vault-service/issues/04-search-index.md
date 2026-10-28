@@ -38,3 +38,7 @@ and lexical search, following ADR-0005 and the research report.
 - Changing the analyzer fingerprint forces a full rebuild.
 - The release binary builds with `CGO_ENABLED=0` and embeds no non-Chinese
   gse dictionaries; dictionary notices are included.
+
+## Comments
+
+Search, fingerprint rebuild, startup sync, and the research queries are done in `internal/index`. Open: type, Task List, and date filters on `/search`, and embedding only the Simplified gse dictionary (the binary is about 50 MB).

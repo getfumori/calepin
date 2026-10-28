@@ -1,6 +1,6 @@
 # Spec: Go Vault Service, first slice
 
-Status: open
+Status: open (issues 04 and 06 have open items)
 
 ## Goal
 

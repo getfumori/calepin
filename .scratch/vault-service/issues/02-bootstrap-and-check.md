@@ -1,6 +1,6 @@
 # 02: Bootstrap and check
 
-Status: open
+Status: resolved
 Type: task
 Blocked by: 01
 
@@ -35,3 +35,7 @@ Manifest and Core Model files.
   broken markers, and an invalid recurrence, each with file and position.
 - A repository-level Git hook in the Vault is never executed (test with a
   hook that would write a marker file).
+
+## Comments
+
+Done. `.fumori/vault.md` and `.fumori/model/` are written by `internal/model/core.go`; their format lives in that file rather than in vault-format.md. The hook test goes red when the `core.hooksPath` guard is removed.
