@@ -10,7 +10,7 @@ AI may read your notes but never silently rewrites them.
 
 ## Quick start
 
-Requires Go 1.26, Node.js 24 with pnpm, and the system Git CLI.
+Requires Go 1.26, Node.js 26 with pnpm, and the system Git CLI.
 
 ```sh
 corepack pnpm install
