@@ -8,15 +8,9 @@ on:
       - master
 
 jobs:
-  verify:
-    name: Node 24 / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-14
+  web:
+    name: Web client
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -33,14 +27,11 @@ jobs:
       - name: Install the locked pnpm workspace
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck Node.js, Web, and test targets
+      - name: Typecheck the Web client and tests
         run: pnpm run typecheck
 
-      - name: Install current stable Chromium
-        run: pnpm exec playwright install --with-deps chromium
+      - name: Run Web client tests
+        run: pnpm test
 
-      - name: Run source acceptance tests
-        run: pnpm run test:unit
-
-      - name: Build, pack, install, and smoke the npm artifact
-        run: pnpm run test:package
+      - name: Build the Web client
+        run: pnpm run build

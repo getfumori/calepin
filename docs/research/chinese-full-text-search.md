@@ -5,7 +5,7 @@ Fumori needs dependable lexical retrieval from Chinese Markdown mixed with techn
 ## Inspection snapshot
 
 - Inspected on 2026-10-27 in America/Los_Angeles, corresponding to 2026-10-28 UTC.
-- Read the working copies of [AGENTS.md](../../AGENTS.md), [CONTEXT.md](../../CONTEXT.md), especially Core retrieval, Lexical retrieval, Indexed block, Memo, Memo comment, and Occurrence record, and [ADR 0002](../adr/0002-go-service-with-typescript-web-client.md) before the investigation.
+- Read the working copies of [AGENTS.md](../../AGENTS.md), [GLOSSARY.md](../../GLOSSARY.md), especially Core retrieval, Lexical retrieval, Indexed block, Memo, Memo comment, and Occurrence record, and [ADR 0002](../adr/0002-go-vault-service-with-typescript-web-client.md) before the investigation.
 - Runtime was Go `1.26.5`, Linux `7.2.9-1-cachyos`, amd64, Intel N97 with four logical CPUs. No remote search service was used.
 - All benchmark code, fixtures, executable probes, profiles, and raw results live outside the repository at `/tmp/fumori-search-bench`. Nothing was committed. The benchmark uses synthetic content, not the Primary Vault.
 
@@ -306,7 +306,7 @@ The pure-Go OpenCC port embeds configuration and dictionaries, but its version i
 
 ### Per-Vault schema sketch
 
-This is a proposed layout, not the exact measured four-field fixture schema. Each row represents one Indexed block. A Memo comment remains a separate result pointing into the original Daily Note, even when its Memo has been extracted. An Occurrence record points into its Task Page. See the [domain definitions](../../CONTEXT.md).
+This is a proposed layout, not the exact measured four-field fixture schema. Each row represents one Indexed block. A Memo comment remains a separate result pointing into the original Daily Note, even when its Memo has been extracted. An Occurrence record points into its Page Task. See the [domain definitions](../../GLOSSARY.md).
 
 ```sql
 CREATE TABLE projection_meta (
@@ -358,7 +358,9 @@ Use `EXISTS` for task-list filtering to avoid duplicate rows from multivalued me
 
 Replace all changed units for one source, including obsolete units and task-list references, in one projection transaction. Rebuild in a separate database and atomically activate a completed generation. Markdown remains authoritative; the projection's deletion must not lose a Memo, comment, Occurrence, or citation identity.
 
-There is an existing policy boundary to resolve before implementation. The requested benchmark measures an update after every save. [Retrieval watermark and Search refresh](../../CONTEXT.md) currently describe checkpoint-based freshness and explicitly distinguish it from per-save indexing. The engine supports small committed per-save updates, but this report does not silently change that domain contract. If per-save projection updates are adopted, keep the checkpoint watermark distinct from working-revision freshness and update the contract through the normal design process.
+There is an existing policy boundary to resolve before implementation. The requested benchmark measures an update after every save. [Retrieval watermark and Search refresh](../../GLOSSARY.md) currently describe checkpoint-based freshness and explicitly distinguish it from per-save indexing. The engine supports small committed per-save updates, but this report does not silently change that domain contract. If per-save projection updates are adopted, keep the checkpoint watermark distinct from working-revision freshness and update the contract through the normal design process.
+
+Resolved after this report: [ADR 0005](../adr/0005-sqlite-fts5-with-go-chinese-analysis.md) adopts per-save index updates and keeps the Retrieval watermark only for AI citations.
 
 ### Fingerprint and rebuild rule
 

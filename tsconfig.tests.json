@@ -2,19 +2,16 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "target": "ES2024",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "types": [
       "node",
-      "vitest/globals",
-      "@playwright/test"
+      "vitest/globals"
     ],
     "noEmit": true
   },
   "include": [
-    "e2e/**/*.ts",
     "test/**/*.ts",
-    "playwright.config.ts",
     "vite.config.ts",
     "vitest.config.ts"
   ]

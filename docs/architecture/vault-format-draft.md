@@ -1,31 +1,30 @@
-# Vault Format Draft: Memos, Tasks, Occurrences, and Sources
+# Vault Format Draft
 
-Status: proposed. This draft extends the Foundation canonical format
-(`_schema: fumori.note` / `fumori.daily-note`, version 1) with the concepts
-accepted in ADR-0003 and ADR-0004. Nothing here is frozen until each decision
-below is marked accepted. Terms follow [`CONTEXT.md`](../../CONTEXT.md).
+Status: proposed. This draft defines version 1 of the canonical Vault format
+for Human Notes, Daily Notes, Memos, Tasks, and Occurrence records, following
+ADR-0001 and ADR-0004. Nothing here is frozen until each decision below is
+marked accepted. Terms follow [`GLOSSARY.md`](../../GLOSSARY.md).
 
 ## Decisions to accept
 
-### F1. Keep the Foundation envelope
+### F1. Reserved envelope
 
-Every Page keeps the existing reserved fields: `_id` (UUID), `_schema`,
-`_version`, `_created`. The handoff's `id` and `_system.format` are not
-adopted; they would duplicate the envelope. New writes bump `_version` only
-when a file uses syntax a version-1 reader cannot interpret, and startup
-rejects a version it does not know rather than rewriting it.
+Every Durable Object carries the reserved fields `_id` (UUID), `_schema`,
+`_version`, and `_created`. `_version` changes only when a file uses syntax an
+older reader cannot interpret, and startup rejects a version it does not know
+rather than rewriting it.
 
 ### F2. The H1 is the title
 
-Unchanged from Foundation: the first H1 is the title, filenames evolve
-independently, and no frontmatter `title` exists.
+The first H1 is the title. Filenames evolve independently, and no frontmatter
+`title` exists.
 
 ### F3. References are wikilinks
 
 Frontmatter references, including `task.list`, use wikilinks such as
-`"[[Homelab]]"`, matching Foundation relationships and Tolaria. The index
-resolves them to `_id`. Renaming a Page is already a managed operation that
-rewrites affected wikilinks, so readable references do not cost stability.
+`"[[Homelab]]"`, matching relationship values and Tolaria. The index
+resolves them to `_id`. Renaming a note is a managed operation that rewrites
+affected wikilinks, so readable references do not cost stability.
 An unresolved or ambiguous reference is a diagnostic, never a silent
 re-categorization.
 
@@ -34,7 +33,7 @@ plain Markdown and Git diffs, and would introduce a second reference style.
 
 ### F4. Block identity
 
-Pages keep UUIDs. Blocks (Memo, Memo comment, Inline Task, Occurrence record)
+Durable Objects use UUIDs. Blocks (Memo, Memo comment, Inline Task, Occurrence record)
 use a kind prefix and 12 random Crockford base32 characters, for example
 `m_01J9Q4X7KD2M`. Block IDs are unique within a Vault; the index reports
 duplicates. Moving content keeps IDs; copying generates new ones.
@@ -74,7 +73,7 @@ after that Memo's existing comments, in the Memo's original Daily Note.
 
 ### F7. Page Task
 
-A Page becomes a Page Task by carrying a `task` map in frontmatter. `task` is
+A Human Note becomes a Page Task by carrying a `task` map in frontmatter. `task` is
 an ordinary public property, not reserved envelope data.
 
 ### F8. Inline Task
@@ -92,16 +91,16 @@ do not recur in the first release.
 ### F9. Occurrence records
 
 Each completed or skipped Occurrence appends an `occurrence` block to the
-recurring Page's body under its history heading. The block, not the
+recurring Task's body under its history heading. The block, not the
 heading, is the authority.
 
 ### F10. Placement
 
-Placement stays non-semantic and follows Foundation: Pages, Task Lists, and
-Page Tasks live in `human/notes/`; Daily Notes in `human/daily/`; Sources in
-`sources/records/`. The handoff's `lists/`, `bookmarks/`, and `types/`
-folders are not adopted because Types already live in
-`.second-brain/model/types/`.
+Placement is non-semantic. Human Notes, Task Lists, and Page Tasks live in
+`human/notes/`; Daily Notes in `human/daily/YYYY/`; Sources in
+`sources/records/`; AI Knowledge in `knowledge/`; attachments in `assets/`.
+The Vault Manifest and Organization Model live under `.fumori/`. There are no
+per-kind folders such as `lists/` or `bookmarks/`.
 
 ### F11. Values
 
@@ -292,5 +291,5 @@ Other rules:
 
 ## Open questions for the next step
 
-- Rich editor round-trip of block markers, which ADR-0001 requires before
+- Rich editor round-trip of block markers, which ADR-0003 requires before
   Memos can be edited in the rich surface.

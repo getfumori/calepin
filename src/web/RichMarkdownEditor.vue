@@ -2,9 +2,9 @@
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 import { computed, ref, watch } from "vue";
 
-import type { ResolvedWikilink } from "../contracts/connections";
+import type { ResolvedWikilink } from "./contracts/connections";
 
-import { createFoundationMarkdownExtensions } from "./foundation-markdown";
+import { createMarkdownProfileExtensions } from "./markdown-profile";
 
 const props = defineProps<{
   modelValue: string;
@@ -19,7 +19,7 @@ const emit = defineEmits<{
 }>();
 
 const editor = useEditor({
-  extensions: createFoundationMarkdownExtensions({
+  extensions: createMarkdownProfileExtensions({
     resolveWikilink(target) {
       return (
         props.wikilinks?.find((link) => link.target === target) ?? {

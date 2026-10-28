@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 
-import { isRichMarkdownRoundTripSafe } from "../../src/web/foundation-markdown.js";
+import { isRichMarkdownRoundTripSafe } from "../../src/web/markdown-profile.js";
 
-describe("Foundation Markdown safety", () => {
+describe("Markdown profile safety", () => {
   test("accepts Markdown emitted by the rich editor", () => {
     expect(
       isRichMarkdownRoundTripSafe(

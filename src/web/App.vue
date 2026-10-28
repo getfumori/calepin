@@ -9,21 +9,21 @@ import {
 import {
   type AppConfig,
   appConfigSchema
-} from "../contracts/app-config";
+} from "./contracts/app-config";
 import {
   type NoteConnections,
   noteConnectionsResponseSchema,
   wikilinkSuggestionListSchema
-} from "../contracts/connections";
+} from "./contracts/connections";
 import {
   type DailyNoteResponse,
   dailyNoteResponseSchema
-} from "../contracts/daily-note";
-import { humanNoteResponseSchema } from "../contracts/human-note";
+} from "./contracts/daily-note";
+import { humanNoteResponseSchema } from "./contracts/human-note";
 import {
   type OrganizationModelResponse,
   organizationModelResponseSchema
-} from "../contracts/organization-model";
+} from "./contracts/organization-model";
 import DocumentInspector from "./DocumentInspector.vue";
 import KnowledgeApp from "./KnowledgeApp.vue";
 import PrimarySidebar from "./PrimarySidebar.vue";
@@ -38,7 +38,7 @@ import {
 } from "./autosave";
 import ContentConflictDialog from "./ContentConflictDialog.vue";
 import { useContentConflict } from "./content-conflict";
-import { isRichMarkdownRoundTripSafe } from "./foundation-markdown";
+import { isRichMarkdownRoundTripSafe } from "./markdown-profile";
 
 type SaveStatus =
   | "ready"
@@ -691,7 +691,7 @@ onBeforeUnmount(() => {
             <p class="eyebrow">Exact-source protection</p>
             <h2>Protected Markdown</h2>
             <p>
-              This note contains syntax outside the Foundation rich profile.
+              This note contains syntax outside the rich editing profile.
               Open Raw Markdown to inspect or edit it without silent rewriting.
             </p>
           </div>

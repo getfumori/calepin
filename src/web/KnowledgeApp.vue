@@ -10,21 +10,21 @@ import {
 import {
   type AppConfig,
   appConfigSchema
-} from "../contracts/app-config";
+} from "./contracts/app-config";
 import {
   type NoteConnections,
   type ResolvedWikilink,
   noteConnectionsResponseSchema,
   wikilinkSuggestionListSchema
-} from "../contracts/connections";
-import { dailyNoteResponseSchema } from "../contracts/daily-note";
+} from "./contracts/connections";
+import { dailyNoteResponseSchema } from "./contracts/daily-note";
 import {
   type HumanNoteListItem,
   type HumanNoteResponse,
   humanNoteDeletionImpactResponseSchema,
   humanNoteListResponseSchema,
   humanNoteResponseSchema
-} from "../contracts/human-note";
+} from "./contracts/human-note";
 import {
   type OrganizationModelResponse,
   type SavedViewResultResponse,
@@ -33,12 +33,12 @@ import {
   organizationModelResponseSchema,
   savedViewResultResponseSchema,
   typeResultResponseSchema
-} from "../contracts/organization-model";
+} from "./contracts/organization-model";
 import DocumentInspector from "./DocumentInspector.vue";
 import {
   type SearchResult,
   searchResponseSchema
-} from "../contracts/search";
+} from "./contracts/search";
 import PrimarySidebar from "./PrimarySidebar.vue";
 import RawMarkdownEditor from "./RawMarkdownEditor.vue";
 import RichMarkdownEditor from "./RichMarkdownEditor.vue";
@@ -51,7 +51,7 @@ import {
 } from "./autosave";
 import ContentConflictDialog from "./ContentConflictDialog.vue";
 import { useContentConflict } from "./content-conflict";
-import { isRichMarkdownRoundTripSafe } from "./foundation-markdown";
+import { isRichMarkdownRoundTripSafe } from "./markdown-profile";
 
 type SaveStatus =
   | "ready"
@@ -1090,7 +1090,7 @@ onBeforeUnmount(() => {
           <p class="eyebrow">Exact-source protection</p>
           <h2>Protected Markdown</h2>
           <p>
-            This note contains syntax outside the Foundation rich profile. Open
+            This note contains syntax outside the rich editing profile. Open
             Raw Markdown to inspect or edit it without silent rewriting.
           </p>
         </div>

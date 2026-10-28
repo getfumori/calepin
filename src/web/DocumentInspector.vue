@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import type { NoteConnections } from "../contracts/connections";
+import type { NoteConnections } from "./contracts/connections";
 import type {
   OrganizationModelResponse,
   OrganizationModelValue,
   TypeProperty
-} from "../contracts/organization-model";
+} from "./contracts/organization-model";
 
 type InspectorMetadata = {
   type: string | null;

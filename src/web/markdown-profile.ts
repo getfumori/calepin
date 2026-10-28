@@ -9,7 +9,7 @@ import {
   type WikilinkPresentation
 } from "./PreservedWikilink.js";
 
-export function createFoundationMarkdownExtensions(options?: {
+export function createMarkdownProfileExtensions(options?: {
   resolveWikilink?: (target: string) => WikilinkPresentation;
 }): Extensions {
   return [
@@ -47,7 +47,7 @@ export function isRichMarkdownRoundTripSafe(bodyMarkdown: string): boolean {
   let editor: Editor | undefined;
   try {
     editor = new Editor({
-      extensions: createFoundationMarkdownExtensions(),
+      extensions: createMarkdownProfileExtensions(),
       content: bodyMarkdown,
       contentType: "markdown"
     });
