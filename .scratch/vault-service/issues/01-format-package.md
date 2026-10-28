@@ -35,9 +35,9 @@ Vault format v1, with no file system access.
 - Every fixture in `vault-format.md` is a golden file under
   `internal/format/testdata/` and parses to the expected structure.
 - Parse then serialize without edits is byte-identical for every fixture and
-  for a corpus of hostile inputs (CRLF, no trailing newline, BOM, Chinese
-  text, code fences containing markers, `ai:omit` spans inside blocks).
+  for a few representative variants (CRLF, no trailing newline, a code fence
+  containing markers).
 - Editing one frontmatter field leaves every other byte of the file
   unchanged.
 - A marker inside a fenced code block produces no Memo, Task, or comment.
-- Each diagnostic kind has a test.
+- Diagnostics are covered by one table-driven test.

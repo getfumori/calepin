@@ -31,12 +31,13 @@ through minimal note and Daily Note endpoints.
 
 - A save against a stale revision returns a conflict and leaves the file
   untouched.
-- Killing the process at each crash window in the service design (via test
-  hooks) and restarting yields the documented state; a retry with the same
-  idempotency key returns the original result exactly once.
+- One table-driven test injects a failure at each crash window in the service
+  design through test hooks, restarts, and checks the documented state; a
+  retry with the same idempotency key returns the original result exactly
+  once.
 - After a crash with unsaved-to-Git changes, restart creates one Recovery
   checkpoint and loses no saved content.
-- Rename crash-tested at every journal step recovers to the complete renamed
-  state.
+- A rename interrupted after the journal commit recovers to the complete
+  renamed state.
 - Editing an unknown frontmatter field through `PUT` with metadata leaves the
   rest of the file byte-identical.

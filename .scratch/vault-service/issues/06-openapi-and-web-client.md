@@ -26,8 +26,9 @@ the binary.
 
 ## Acceptance
 
-- One built binary bootstraps a Vault, serves the Web client, and lets a
-  browser create, edit, link, and search notes and edit Today.
+- A small set of end-to-end journeys against one built binary covers
+  bootstrapping a Vault, creating, editing, linking, and searching notes, and
+  editing Today. Web UI logic gets no new component unit tests.
 - Changing the OpenAPI document without regenerating fails CI.
 - The binary listens on `127.0.0.1` by default and warns when bound
   elsewhere, since the service has no authentication of its own.

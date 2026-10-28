@@ -40,4 +40,4 @@ exposed by the API.
   Daily Note with its own timestamp.
 - Assigning a Task List to an Unlisted Task changes only the `task.list`
   field.
-- Clock and time zone are injected; tests cover midnight and DST boundaries.
+- Clock and time zone are injected; one test covers a midnight boundary.
