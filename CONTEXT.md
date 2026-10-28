@@ -388,7 +388,7 @@ separate explicit history-rewrite procedure.
 _Avoid_: Backup retention window, delete means purge, automatic shallow history
 
 **Modular monolith**:
-The first-version deployment shape: one TypeScript server process and application package contains HTTP delivery, background scheduling, AI orchestration, and isolated Vault instances behind explicit internal interfaces. The Vue Web/PWA is a separate browser build target served by that process. Heavy work may later move to an external command or process, but normal orchestration has no distributed worker system.
+The first-version deployment shape: one Go server binary contains HTTP delivery, background scheduling, AI orchestration, and isolated Vault instances behind explicit internal interfaces. The Vue Web/PWA is a separate browser build target served by that process. Heavy work may later move to an external command or process, but normal orchestration has no distributed worker system.
 _Avoid_: Microservices, Redis job cluster, package per internal concern, browser/server code mixing
 
 **Vault Module**:
@@ -480,12 +480,24 @@ A repeatable, runtime-derived diagnostic process that compares Markdown against 
 _Avoid_: Validation failure, background cleanup
 
 **Today**:
-The adjustable default home and human-authored chronological capture surface for the current day. Today is one ordinary date-based Human Note; its entries may contain thoughts, records, pasted links, or links to other notes without becoming separate objects or entering a special processing workflow. AI assistance and Review may appear around it, but cannot write into its note body without a Change Proposal.
+The adjustable default home and human-authored chronological capture surface for the current day. Today is one ordinary date-based Human Note with two regions: free-form Today entries and the day's Memo stream. AI assistance and Review may appear around it, but cannot write into its note body without a Change Proposal.
 _Avoid_: Daily dashboard, mandatory journal, Inbox
 
 **Today entry**:
-An ordinary Markdown fragment written into Today. It has no independent lifecycle, type, provenance record, or promotion state. When an entry deserves expansion, the user creates and links an ordinary Human Note using the same editing and wikilink tools available everywhere else.
-_Avoid_: Capture item, promotable block, automatic extraction
+An ordinary Markdown fragment written directly into Today's free-form region. It has no independent identity, lifecycle, type, or promotion state. When an entry deserves expansion, the user creates and links an ordinary Human Note.
+_Avoid_: Memo, capture item, promotable block
+
+**Quick capture**:
+The single input that accepts a thought or task without asking where it belongs and appends it as a Memo to the Daily Note of the user's current local date.
+_Avoid_: New note dialog, capture folder
+
+**Memo**:
+An identified, timestamped block in a Daily Note's Memo stream, created by Quick capture or written in place. A Memo keeps its identity when extracted into its own Page, and the original position keeps a link to it.
+_Avoid_: Today entry, flash note file, Durable Object
+
+**Memo comment**:
+A later, separately timestamped addition attached to exactly one Memo. It is stored next to its Memo in the Memo's original Daily Note regardless of when it was written, and comments do not nest.
+_Avoid_: Reply thread, new Memo, comment on a Page
 
 **Review recent changes**:
 A user-started Foreground AI conversation over authorized Vault changes since
@@ -530,16 +542,63 @@ _Avoid_: Daily report object, mixed authorship summary, AI approval queue
 
 **Today context**:
 The configurable set of deterministic Saved Views shown only alongside the
-current day's Today to resurface current Vault state, such as open Markdown
-checkboxes, captured Inbox notes, recent objects, and Preset-defined pending
-work. An unresolved result may therefore appear across successive days until it
-changes in its source object. It works without AI and does not turn Today or the
-Vault into a replacement task manager.
+current day's Today to resurface current Vault state, such as Tasks scheduled
+or due today, captured Inbox notes, and recent objects. An unresolved result may
+therefore appear across successive days until it changes in its source object.
+It works without AI and never copies results into Today's body.
 _Avoid_: Copied task list, AI-generated daily dashboard, Today body content
+
+**Task**:
+An actionable item whose state lives in canonical Markdown where it was
+written. A Task is either a Page Task or an Inline Task; there is no separate
+task store.
+_Avoid_: Checkbox, todo record, task database row
+
+**Page Task**:
+A Page that carries the `task` property, making the whole Page the Task and its
+body the Task's details. Removing the property returns it to an ordinary Page.
+_Avoid_: Task detail note, linked task
+
+**Inline Task**:
+An explicitly marked checkbox inside a Page body or Memo. Its checkbox is the
+authoritative completion state. An unmarked checkbox is only a local checklist
+item and never appears in global Task views.
+_Avoid_: Checklist item, any checkbox
+
+**Task List**:
+A Page of type `task-list` that Tasks reference to group action. A Task belongs
+to at most one Task List; Task List membership is independent of folders, Type,
+and tags.
+_Avoid_: Project folder, tag, Type
+
+**Recurrence**:
+The rule on a Page Task that schedules its next Occurrence, based either on a
+fixed calendar schedule or on the actual completion time of the previous
+Occurrence. A recurring Task persists; it is never itself marked done.
+_Avoid_: Repeating copy, recurring Page duplication
+
+**Occurrence**:
+One scheduled round of a recurring Task, with a stable identity and its
+original scheduled date. Postponing an Occurrence changes its schedule but not
+its identity.
+_Avoid_: Instance, next task copy
+
+**Occurrence record**:
+The structured block appended to a recurring Task's Page body when an
+Occurrence is completed or skipped. It records the Occurrence identity, the
+outcome, the originally scheduled and actual times, and free Markdown notes.
+_Avoid_: Run, log line, completion event
 
 **Inbox**:
 The Core Model Saved View of standalone Human Notes whose Knowledge Lifecycle state is `captured`. Inbox is an attention queue derived from canonical Markdown, not a folder, Type, storage location, or container with membership. Creating from Inbox and the global New Note action both create a standalone Human Note in the captured state; Today entries are not Inbox items.
-_Avoid_: Inbox folder, Inbox type, Daily Notes, stored collection
+_Avoid_: Inbox folder, Inbox type, Daily Notes, stored collection, Unlisted Tasks
+
+**Unlisted Tasks**:
+The derived Task view of open Tasks that reference no Task List. Quick capture
+and global task creation produce Unlisted Tasks unless a Task List is chosen;
+assigning one changes only the Task's reference, never its source location.
+Unlisted Tasks are not Inbox items.
+_Avoid_: Inbox, task inbox, default Task List file
 
 **Contextual creation**:
 A note-creation action whose visible navigation context supplies explicit initial semantics. Creating from a Type assigns that `type` and applies its optional Template; unless the Template says otherwise, the new standalone Human Note remains `captured`. Creating from Inbox or using global New Note assigns `state: captured`. Context supplies defaults but does not create a distinct object format or storage location.
@@ -612,10 +671,13 @@ _Avoid_: Vector search, model-dependent search, cross-Vault search
 
 **Lexical retrieval**:
 The first-version text-matching part of Core retrieval. It supports mixed
-Chinese and English substring search, weighted title and heading matches, and
-a bounded fallback for very short queries without requiring language-specific
-segmentation or an AI model.
-_Avoid_: Semantic retrieval, mandatory Chinese dictionary, raw Markdown syntax search
+Chinese and English search, weighted title and heading matches, and reliable
+results for two-character Chinese words and mixed identifiers such as model
+numbers, without requiring an AI model. Traditional and Simplified script
+forms match each other; regional vocabulary differences do not. A query needs
+at least two Han characters or one complete identifier; single-character
+search is not promised.
+_Avoid_: Semantic retrieval, raw Markdown syntax search, single-character substring search
 
 **Vault retrieval projection**:
 The single disposable per-Vault query model derived from canonical Markdown.
@@ -627,20 +689,20 @@ citations.
 _Avoid_: Canonical knowledge database, global search database, separate graph service
 
 **Retrieval watermark**:
-The Vault history revision through which the Vault retrieval projection is
-known to reflect canonical knowledge. Autosaved worktree changes after that
-commit may remain absent from Vault-wide search until the next checkpoint and
-projection update; callers can observe the watermark and pending-change state
-rather than assuming search is current.
-_Avoid_: Object working revision, hidden indexing lag, per-save index revision
+The latest Checkpoint commit whose content the Vault retrieval projection is
+known to contain. The projection itself is updated after every successful save,
+so owner search reflects current Object working revisions; the watermark
+separately tells AI retrieval and citations which content is already pinned in
+Git history.
+_Avoid_: Object working revision, hidden indexing lag, search freshness
 
 **Search refresh**:
-The user-facing request to make current saved knowledge available to
-Vault-wide search and AI retrieval before the normal checkpoint cadence. The
-server creates a checkpoint when needed, updates the Vault retrieval
-projection, and advances its Retrieval watermark; the user does not manage Git
-staging, commit messages, or repository history through this action.
-_Avoid_: Manual Git commit, per-save indexing, index-only refresh
+The request to make current saved knowledge citable by AI retrieval before the
+normal checkpoint cadence. The server creates a checkpoint when needed and
+advances the Retrieval watermark; owner search never needs it because the
+projection already follows every save. The user does not manage Git staging,
+commit messages, or repository history through this action.
+_Avoid_: Manual Git commit, owner search refresh, index-only refresh
 
 **Indexed block**:
 A Markdown-semantic passage projected for retrieval together with its owning
@@ -676,7 +738,7 @@ _Avoid_: Core retrieval, canonical vector store, required Vault index
 ## Knowledge Spaces
 
 **Durable Object**:
-A knowledge item that has its own stable identity, lifecycle, relationships, and revision history. A fragment inside Today is not a Durable Object; the user may manually create and link a separate Durable Object when an idea needs independent development.
+A knowledge item that has its own stable identity, lifecycle, relationships, and revision history. A Today entry is not a Durable Object, and a Memo has identity but not its own lifecycle; the user may manually create and link a separate Durable Object when an idea needs independent development.
 _Avoid_: File, block, database row
 
 **Human Notes**:
@@ -685,11 +747,23 @@ _Avoid_: Source archive, AI Wiki
 
 **Sources**:
 The space for captured external material whose chosen preserved representation and provenance are stored as evidence. Each Source is a self-describing Markdown record under `sources/records/` with a structured `source` profile rather than `type: Source`; optional original payloads live under `sources/files/`. AI may read and interpret a Source but must not rewrite it.
-_Avoid_: Bookmark list, Human Notes
+_Avoid_: Bookmark Page, `type: bookmark`, Human Notes
+
+**Bookmarks**:
+The derived view of Sources captured from Web pages. A bookmark is the Source
+itself; the user's own remarks stay in the Memo or Human Note that links to it.
+_Avoid_: Bookmark Page, bookmark folder, browser bookmark sync
 
 **URL Capture**:
-The explicit action that turns a bare URL into a Source. Merely pasting a URL into Today or a Human Note does not capture it. After successful capture, the selected URL becomes a readable wikilink to the Source record; an authorized AI research job may perform the same action when it actually uses the page as evidence. Dedicated browser and share-sheet integrations are later conveniences rather than prerequisites.
-_Avoid_: Browser bookmark sync, web clipper
+The action that turns a URL into a Source. A capable client starts it
+automatically when the user adds a URL to a Memo; elsewhere it remains an
+explicit action. The client retrieves and extracts the page and submits the
+result, which the server validates and stores as an untrusted Capture revision
+that records which client captured it. Capturing an already captured URL
+resolves to the same Source. After capture, the URL becomes a readable link to
+the Source while the user's surrounding text is unchanged. If retrieval fails,
+nothing is created and the plain URL remains so a client can retry later.
+_Avoid_: Server-guessed content, Bookmark Page, one Source per save
 
 **Transient URL research**:
 The authorized fetching of a pasted URL inside a Foreground AI conversation
