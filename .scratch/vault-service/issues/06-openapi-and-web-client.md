@@ -1,6 +1,6 @@
 # 06: OpenAPI contract and Web client
 
-Status: open
+Status: resolved
 Type: task
 Blocked by: 05
 
@@ -38,3 +38,5 @@ the binary.
 The Web client runs on the Go API, is embedded in the binary, and has a Memo stream with quick capture on Today. `e2e/contracts.spec.ts` checks every GET response against the zod contracts, and `e2e/journey.spec.ts` covers the main journey. Open: the OpenAPI document and code generation.
 
 The Web client now has task screens: a Task panel on every Human Note (make a task, complete or skip a round with notes, history, undo, pause, Task List) and a `/tasks` view with Today, Unlisted, Task List, and Done filters. Human Note responses separate the editor text from Occurrence records, so routine notes stay editable in the rich editor. `e2e/tasks.spec.ts` covers the routine and triage journey.
+
+`api/openapi.json` is generated from the zod contracts and the endpoint table in `src/web/contracts/api.ts`; a Web test fails when it is stale, and the e2e contract check walks the same table against the Go server. Go handlers are not generated; that is recorded in vault-service.md.

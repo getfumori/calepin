@@ -62,6 +62,10 @@ corepack pnpm test
 corepack pnpm run test:e2e              # builds the binary, then runs Playwright
 ```
 
+The HTTP API is described by `api/openapi.json`. It is generated from
+`src/web/contracts/` with `corepack pnpm run openapi`, and `pnpm test` fails
+when it is stale.
+
 For Web development, run `bin/fumori serve` on port 3000 and
 `corepack pnpm dev`; Vite proxies `/api` to the Go server.
 

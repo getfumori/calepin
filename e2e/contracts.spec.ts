@@ -25,6 +25,11 @@ import {
   typeResultResponseSchema
 } from "../src/web/contracts/organization-model";
 import { searchResponseSchema } from "../src/web/contracts/search";
+import {
+  dailyWriteResponseSchema,
+  endpoints,
+  taskCommandResponseSchema
+} from "../src/web/contracts/api";
 
 const fumori = join(process.cwd(), "bin", "fumori");
 
@@ -82,6 +87,19 @@ test("every Go API response satisfies the Web client contracts", async ({
       data: { format: "rich", baseRevision: source.revision, bodyMarkdown: "# 备份 Source\n\n[[Target]] [[Missing]]" }
     });
 
+    for (const endpoint of endpoints) {
+      if (endpoint.method === "get" && !endpoint.path.includes("{") && !endpoint.query?.q) {
+        await get(endpoint.path, endpoint.response!);
+      }
+    }
+    const made = await request.post(`${url}/api/v1/tasks/${target.id}/make`, {
+      data: { scheduled: "2026-11-01", recurrence: { basis: "schedule", frequency: "weekly", interval: 1, weekdays: ["sun"] } }
+    });
+    expect(taskCommandResponseSchema.safeParse(await made.json()).success).toBe(true);
+    const captured = await request.post(`${url}/api/v1/capture`, { data: { text: "买网线", task: true } });
+    expect(dailyWriteResponseSchema.safeParse(await captured.json()).success).toBe(true);
+    await get(`/api/v1/notes/${target.id}`, humanNoteResponseSchema);
+    await get("/api/v1/tasks?status=all", endpoints.find((e) => e.path === "/api/v1/tasks")!.response!);
     await get("/api/v1/config", appConfigSchema);
     const today = await get("/api/v1/today", dailyNoteResponseSchema);
     await get(`/api/v1/daily/${today.date}`, dailyNoteResponseSchema);

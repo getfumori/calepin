@@ -1,0 +1,3269 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Fumori Vault Service",
+    "version": "1",
+    "description": "Generated from src/web/contracts/api.ts by `pnpm run openapi`. Do not edit by hand. The service has no authentication of its own; it listens on loopback or behind an operator-controlled authenticating gateway, so no security scheme is declared."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:3000",
+      "description": "Default local listener"
+    }
+  ],
+  "paths": {
+    "/api/v1/config": {
+      "get": {
+        "operationId": "getConfig",
+        "summary": "Autosave and checkpoint settings",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppConfig"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/checkpoint": {
+      "post": {
+        "operationId": "postCheckpoint",
+        "summary": "Commit the work tree when it changed",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckpointResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/diagnostics": {
+      "get": {
+        "operationId": "getDiagnostics",
+        "summary": "Quarantined files and their problems",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiagnosticsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/today": {
+      "get": {
+        "operationId": "getToday",
+        "summary": "Today's Daily Note, real or not yet created",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyNoteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/daily/{date}": {
+      "get": {
+        "operationId": "getDailyBydate",
+        "summary": "The Daily Note for a date",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyNoteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "putDailyBydate",
+        "summary": "Save a Daily Note; the first save creates today's",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveDailyNoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyNoteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postDailyBydate",
+        "summary": "Create the Daily Note for any date",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyNoteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notes": {
+      "get": {
+        "operationId": "getNotes",
+        "summary": "Active standalone Human Notes",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanNoteListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "postNotes",
+        "summary": "Create a Human Note",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHumanNoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanNoteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notes/{id}": {
+      "get": {
+        "operationId": "getNotesByid",
+        "summary": "One Human Note",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanNoteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "putNotesByid",
+        "summary": "Save a Human Note against its base revision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveHumanNoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanNoteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteNotesByid",
+        "summary": "Delete a note after confirming its incoming links",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteHumanNoteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notes/{id}/deletion-impact": {
+      "get": {
+        "operationId": "getNotesByidDeletionImpact",
+        "summary": "Incoming links a delete would break",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanNoteDeletionImpactResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/notes/{id}/rename-to-title": {
+      "post": {
+        "operationId": "postNotesByidRenameToTitle",
+        "summary": "Rename the file to its title and rewrite links",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenameToTitleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanNoteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/connections/{id}": {
+      "get": {
+        "operationId": "getConnectionsByid",
+        "summary": "Links, backlinks, and relationships of a note",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteConnectionsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/wikilinks/suggestions": {
+      "get": {
+        "operationId": "getWikilinksSuggestions",
+        "summary": "Link targets matching a prefix",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Text to match",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WikilinkSuggestionList"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inbox": {
+      "get": {
+        "operationId": "getInbox",
+        "summary": "Captured standalone notes",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanNoteListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/archive": {
+      "get": {
+        "operationId": "getArchive",
+        "summary": "Archived standalone notes",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HumanNoteListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/model": {
+      "get": {
+        "operationId": "getModel",
+        "summary": "The Organization Model",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationModelResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/types": {
+      "get": {
+        "operationId": "getTypes",
+        "summary": "Type definitions",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeDefinitionListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/types/{key}": {
+      "get": {
+        "operationId": "getTypesBykey",
+        "summary": "Notes of one Type",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeResultResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/views": {
+      "get": {
+        "operationId": "getViews",
+        "summary": "Saved views",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedViewListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/views/{key}": {
+      "get": {
+        "operationId": "getViewsBykey",
+        "summary": "Results of one Saved view",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedViewResultResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search": {
+      "get": {
+        "operationId": "getSearch",
+        "summary": "Lexical search in mixed Chinese and English",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "description": "Query, at least two Han characters or one identifier",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "Type key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "list",
+            "in": "query",
+            "required": false,
+            "description": "Task List title",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": false,
+            "description": "Earliest date",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": false,
+            "description": "Latest date",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/capture": {
+      "post": {
+        "operationId": "postCapture",
+        "summary": "Append a Memo, or an Inline Task, to today's Daily Note",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "Replays the recorded response when a request is retried",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CaptureRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyWriteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/memos/{id}/comments": {
+      "post": {
+        "operationId": "postMemosByidComments",
+        "summary": "Add a Memo comment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "Replays the recorded response when a request is retried",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyWriteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks": {
+      "get": {
+        "operationId": "getTasks",
+        "summary": "Tasks; status defaults to open and paused",
+        "parameters": [
+          {
+            "name": "list",
+            "in": "query",
+            "required": false,
+            "description": "Task List title, or 'unlisted'",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "open, paused, done, canceled, or all",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/{action}": {
+      "post": {
+        "operationId": "postTasksByidByaction",
+        "summary": "Run a task command: make, complete, skip, undo, cancel, reopen, pause, resume, update, or remove",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "Replays the recorded response when a request is retried",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskCommandRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error: not_found, stale_revision, conflict, invalid_canonical_markdown, invalid_query, or bad_request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CheckpointResponse": {
+        "$id": "#/components/schemas/CheckpointResponse",
+        "type": "object",
+        "properties": {
+          "created": {
+            "type": "boolean"
+          },
+          "commit": {
+            "type": "string"
+          },
+          "changedFiles": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "created",
+          "changedFiles"
+        ]
+      },
+      "DiagnosticsResponse": {
+        "$id": "#/components/schemas/DiagnosticsResponse",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "revision": {
+              "type": "string"
+            },
+            "problems": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "path",
+            "revision",
+            "problems"
+          ]
+        }
+      },
+      "CaptureRequest": {
+        "$id": "#/components/schemas/CaptureRequest",
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "task": {
+            "type": "boolean"
+          },
+          "list": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "CommentRequest": {
+        "$id": "#/components/schemas/CommentRequest",
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "text"
+        ]
+      },
+      "DailyWriteResponse": {
+        "$id": "#/components/schemas/DailyWriteResponse",
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "revision": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "revision"
+        ]
+      },
+      "TaskCommandRequest": {
+        "$id": "#/components/schemas/TaskCommandRequest",
+        "type": "object",
+        "properties": {
+          "expectedOccurrence": {
+            "type": "string"
+          },
+          "baseRevision": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "scheduled": {
+            "type": "string"
+          },
+          "due": {
+            "type": "string"
+          },
+          "list": {
+            "type": "string"
+          },
+          "recurrence": {
+            "$ref": "#/components/schemas/Recurrence"
+          }
+        }
+      },
+      "TaskCommandResponse": {
+        "$id": "#/components/schemas/TaskCommandResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "revision"
+        ]
+      },
+      "ErrorResponse": {
+        "$id": "#/components/schemas/ErrorResponse",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "currentRevision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "currentIncomingLinkCount": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "NoteConnectionsResponse": {
+        "$id": "#/components/schemas/NoteConnectionsResponse",
+        "type": "object",
+        "properties": {
+          "outgoing": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "target": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sourceMarkdown": {
+                  "type": "string",
+                  "minLength": 4
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "resolved",
+                    "ambiguous",
+                    "unresolved"
+                  ]
+                },
+                "url": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "matches": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "title": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "url": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "url"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "target",
+                "label",
+                "sourceMarkdown",
+                "status",
+                "url",
+                "matches"
+              ]
+            }
+          },
+          "backlinks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "title": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "url"
+              ]
+            }
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "cardinality": {
+                  "type": "string",
+                  "enum": [
+                    "one",
+                    "many"
+                  ]
+                },
+                "targets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "target": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "label": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "sourceMarkdown": {
+                        "type": "string",
+                        "minLength": 4
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "resolved",
+                          "ambiguous",
+                          "unresolved"
+                        ]
+                      },
+                      "url": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "matches": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "title": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "url": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "title",
+                            "url"
+                          ]
+                        }
+                      }
+                    },
+                    "required": [
+                      "target",
+                      "label",
+                      "sourceMarkdown",
+                      "status",
+                      "url",
+                      "matches"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "key",
+                "name",
+                "cardinality",
+                "targets"
+              ]
+            }
+          },
+          "inverseRelationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "source": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "title",
+                    "url"
+                  ]
+                }
+              },
+              "required": [
+                "key",
+                "source"
+              ]
+            }
+          }
+        },
+        "required": [
+          "outgoing",
+          "backlinks",
+          "relationships",
+          "inverseRelationships"
+        ]
+      },
+      "WikilinkSuggestionList": {
+        "$id": "#/components/schemas/WikilinkSuggestionList",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "string",
+              "minLength": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1
+            },
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "target",
+            "title",
+            "url"
+          ]
+        }
+      },
+      "RenameToTitleRequest": {
+        "$id": "#/components/schemas/RenameToTitleRequest",
+        "type": "object",
+        "properties": {
+          "baseRevision": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "required": [
+          "baseRevision"
+        ]
+      },
+      "DailyMemo": {
+        "$id": "#/components/schemas/DailyMemo",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "created": {
+            "type": "string"
+          },
+          "markdown": {
+            "type": "string"
+          },
+          "comments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "created": {
+                  "type": "string"
+                },
+                "markdown": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "created",
+                "markdown"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "created",
+          "markdown",
+          "comments"
+        ]
+      },
+      "DailyNoteResponse": {
+        "$id": "#/components/schemas/DailyNoteResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "exists": {
+            "type": "boolean"
+          },
+          "revision": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bodyMarkdown": {
+            "type": "string"
+          },
+          "sourceMarkdown": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "type": "string",
+            "const": "daily-note"
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "properties": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OrganizationModelValue"
+            }
+          },
+          "vault": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ]
+          },
+          "memos": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyMemo"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "exists",
+          "revision",
+          "bodyMarkdown",
+          "sourceMarkdown",
+          "type",
+          "state",
+          "tags",
+          "aliases",
+          "properties",
+          "vault"
+        ]
+      },
+      "SaveDailyNoteRequest": {
+        "$id": "#/components/schemas/SaveDailyNoteRequest",
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "format": {
+                "type": "string",
+                "const": "rich"
+              },
+              "baseRevision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "bodyMarkdown": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "format",
+              "baseRevision",
+              "bodyMarkdown"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "format": {
+                "type": "string",
+                "const": "raw"
+              },
+              "baseRevision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "sourceMarkdown": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "format",
+              "baseRevision",
+              "sourceMarkdown"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "format": {
+                "type": "string",
+                "const": "document"
+              },
+              "baseRevision": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "bodyMarkdown": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "aliases": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "properties": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/OrganizationModelValue"
+                }
+              }
+            },
+            "required": [
+              "format",
+              "baseRevision",
+              "bodyMarkdown",
+              "state",
+              "tags",
+              "aliases",
+              "properties"
+            ]
+          }
+        ]
+      },
+      "StaleDailyNoteResponse": {
+        "$id": "#/components/schemas/StaleDailyNoteResponse",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "const": "stale_revision"
+          },
+          "currentRevision": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "error",
+          "currentRevision"
+        ]
+      },
+      "ExplicitCreationRequiredResponse": {
+        "$id": "#/components/schemas/ExplicitCreationRequiredResponse",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "const": "explicit_creation_required"
+          }
+        },
+        "required": [
+          "error"
+        ]
+      },
+      "InvalidCanonicalMarkdownResponse": {
+        "$id": "#/components/schemas/InvalidCanonicalMarkdownResponse",
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "const": "invalid_canonical_markdown"
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "error",
+          "message"
+        ]
+      },
+      "HumanNoteResponse": {
+        "$id": "#/components/schemas/HumanNoteResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "canonicalPath": {
+            "type": "string",
+            "pattern": "^human\\/notes\\/[^/]+\\.md$"
+          },
+          "revision": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "bodyMarkdown": {
+            "type": "string"
+          },
+          "sourceMarkdown": {
+            "type": "string"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "properties": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OrganizationModelValue"
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              ]
+            }
+          },
+          "vault": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ]
+          },
+          "task": {
+            "default": null,
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PageTask"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "occurrences": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OccurrenceRecord"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "canonicalPath",
+          "revision",
+          "bodyMarkdown",
+          "sourceMarkdown",
+          "type",
+          "state",
+          "tags",
+          "aliases",
+          "properties",
+          "relationships",
+          "vault"
+        ]
+      },
+      "CreateHumanNoteRequest": {
+        "$id": "#/components/schemas/CreateHumanNoteRequest",
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "context": {
+                "type": "string",
+                "enum": [
+                  "global",
+                  "inbox"
+                ]
+              }
+            },
+            "required": [
+              "context"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "context": {
+                "type": "string",
+                "const": "wikilink"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[^\\[\\]\\n|]+$"
+              }
+            },
+            "required": [
+              "context",
+              "target"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "context": {
+                "type": "string",
+                "const": "type"
+              },
+              "type": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_-]*$"
+              }
+            },
+            "required": [
+              "context",
+              "type"
+            ]
+          }
+        ]
+      },
+      "SaveHumanNoteRequest": {
+        "$id": "#/components/schemas/SaveHumanNoteRequest",
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "format": {
+                "type": "string",
+                "const": "rich"
+              },
+              "baseRevision": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "bodyMarkdown": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "format",
+              "baseRevision",
+              "bodyMarkdown"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "format": {
+                "type": "string",
+                "const": "raw"
+              },
+              "baseRevision": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "sourceMarkdown": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "format",
+              "baseRevision",
+              "sourceMarkdown"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "format": {
+                "type": "string",
+                "const": "metadata"
+              },
+              "baseRevision": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "type": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_-]*$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "aliases": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "properties": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/OrganizationModelValue"
+                }
+              },
+              "relationships": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "required": [
+              "format",
+              "baseRevision",
+              "type",
+              "state",
+              "tags",
+              "aliases",
+              "properties"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "format": {
+                "type": "string",
+                "const": "document"
+              },
+              "baseRevision": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "bodyMarkdown": {
+                "type": "string"
+              },
+              "type": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9_-]*$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "state": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "aliases": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "properties": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/OrganizationModelValue"
+                }
+              },
+              "relationships": {
+                "type": "object",
+                "propertyNames": {
+                  "type": "string"
+                },
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            "required": [
+              "format",
+              "baseRevision",
+              "bodyMarkdown",
+              "type",
+              "state",
+              "tags",
+              "aliases",
+              "properties"
+            ]
+          }
+        ]
+      },
+      "HumanNoteListItem": {
+        "$id": "#/components/schemas/HumanNoteListItem",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "canonicalPath": {
+            "type": "string",
+            "pattern": "^human\\/notes\\/[^/]+\\.md$"
+          },
+          "revision": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^\\/notes\\/[0-9a-f-]{36}$"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "canonicalPath",
+          "revision",
+          "state",
+          "url"
+        ]
+      },
+      "HumanNoteListResponse": {
+        "$id": "#/components/schemas/HumanNoteListResponse",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/HumanNoteListItem"
+        }
+      },
+      "HumanNoteDeletionImpactResponse": {
+        "$id": "#/components/schemas/HumanNoteDeletionImpactResponse",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "revision": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "incomingLinkCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "id",
+          "revision",
+          "incomingLinkCount"
+        ]
+      },
+      "DeleteHumanNoteRequest": {
+        "$id": "#/components/schemas/DeleteHumanNoteRequest",
+        "type": "object",
+        "properties": {
+          "baseRevision": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "confirmedIncomingLinkCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "baseRevision",
+          "confirmedIncomingLinkCount"
+        ]
+      },
+      "OrganizationModelValue": {
+        "$id": "#/components/schemas/OrganizationModelValue",
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "SchemaKey": {
+        "$id": "#/components/schemas/SchemaKey",
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_-]*$"
+      },
+      "TypeProperty": {
+        "$id": "#/components/schemas/TypeProperty",
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/SchemaKey"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "text",
+              "number",
+              "boolean",
+              "date",
+              "select",
+              "multi_select"
+            ]
+          },
+          "options": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "default": {
+            "$ref": "#/components/schemas/OrganizationModelValue"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "advisory": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "kind"
+        ]
+      },
+      "TypeDefinition": {
+        "$id": "#/components/schemas/TypeDefinition",
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/SchemaKey"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "defaultState": {
+            "type": "string",
+            "minLength": 1
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TypeProperty"
+            }
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "properties"
+        ]
+      },
+      "RelationshipDefinition": {
+        "$id": "#/components/schemas/RelationshipDefinition",
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/SchemaKey"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cardinality": {
+            "type": "string",
+            "enum": [
+              "one",
+              "many"
+            ]
+          },
+          "inverse": {
+            "$ref": "#/components/schemas/SchemaKey"
+          },
+          "targetTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SchemaKey"
+            }
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "cardinality",
+          "inverse",
+          "targetTypes"
+        ]
+      },
+      "QueryPredicate": {
+        "$id": "#/components/schemas/QueryPredicate",
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_-]*$"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "not_equals",
+              "in",
+              "not_in",
+              "contains",
+              "exists",
+              "greater_than",
+              "greater_than_or_equal",
+              "less_than",
+              "less_than_or_equal"
+            ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/OrganizationModelValue"
+          }
+        },
+        "required": [
+          "field",
+          "operator"
+        ]
+      },
+      "QueryFilter": {
+        "$id": "#/components/schemas/QueryFilter",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/QueryPredicate"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "all": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/QueryFilter"
+                }
+              }
+            },
+            "required": [
+              "all"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "any": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/QueryFilter"
+                }
+              }
+            },
+            "required": [
+              "any"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "not": {
+                "$ref": "#/components/schemas/QueryFilter"
+              }
+            },
+            "required": [
+              "not"
+            ]
+          }
+        ]
+      },
+      "QuerySpec": {
+        "$id": "#/components/schemas/QuerySpec",
+        "type": "object",
+        "properties": {
+          "filter": {
+            "$ref": "#/components/schemas/QueryFilter"
+          },
+          "order": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "pattern": "^[a-z_][a-z0-9_-]*$"
+                },
+                "direction": {
+                  "type": "string",
+                  "enum": [
+                    "ascending",
+                    "descending"
+                  ]
+                }
+              },
+              "required": [
+                "field",
+                "direction"
+              ]
+            }
+          },
+          "groupBy": {
+            "type": "string",
+            "pattern": "^[a-z_][a-z0-9_-]*$"
+          },
+          "layout": {
+            "type": "string",
+            "enum": [
+              "list",
+              "table",
+              "board"
+            ]
+          },
+          "visibleColumns": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_][a-z0-9_-]*$"
+            }
+          }
+        }
+      },
+      "SavedView": {
+        "$id": "#/components/schemas/SavedView",
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/SchemaKey"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "query": {
+            "$ref": "#/components/schemas/QuerySpec"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "query"
+        ]
+      },
+      "TypeDefinitionListResponse": {
+        "$id": "#/components/schemas/TypeDefinitionListResponse",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/TypeDefinition"
+        }
+      },
+      "SavedViewListResponse": {
+        "$id": "#/components/schemas/SavedViewListResponse",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/SavedView"
+        }
+      },
+      "OrganizationModelResponse": {
+        "$id": "#/components/schemas/OrganizationModelResponse",
+        "type": "object",
+        "properties": {
+          "states": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "standaloneCreationState": {
+            "type": "string",
+            "minLength": 1
+          },
+          "archivedState": {
+            "type": "string",
+            "minLength": 1
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TypeDefinition"
+            }
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelationshipDefinition"
+            }
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SavedView"
+            }
+          }
+        },
+        "required": [
+          "states",
+          "standaloneCreationState",
+          "archivedState",
+          "types",
+          "relationships",
+          "views"
+        ]
+      },
+      "StructuredNoteItem": {
+        "$id": "#/components/schemas/StructuredNoteItem",
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "standalone",
+              "daily"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "canonicalPath": {
+            "type": "string",
+            "pattern": "^human\\/(?:notes\\/[^/]+|daily\\/\\d{4}\\/\\d{4}-\\d{2}-\\d{2})\\.md$"
+          },
+          "revision": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "properties": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OrganizationModelValue"
+            }
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^\\/(?:notes\\/[0-9a-f-]{36}|daily\\/\\d{4}-\\d{2}-\\d{2})$"
+          },
+          "fields": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/OrganizationModelValue"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "title",
+          "canonicalPath",
+          "revision",
+          "type",
+          "state",
+          "tags",
+          "aliases",
+          "properties",
+          "url",
+          "fields"
+        ]
+      },
+      "TypeResultResponse": {
+        "$id": "#/components/schemas/TypeResultResponse",
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/SchemaKey"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "defaultState": {
+            "type": "string",
+            "minLength": 1
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TypeProperty"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StructuredNoteItem"
+            }
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "properties",
+          "items"
+        ]
+      },
+      "SavedViewResultResponse": {
+        "$id": "#/components/schemas/SavedViewResultResponse",
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/SchemaKey"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "query": {
+            "$ref": "#/components/schemas/QuerySpec"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StructuredNoteItem"
+                  }
+                }
+              },
+              "required": [
+                "key",
+                "items"
+              ]
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StructuredNoteItem"
+            }
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "query",
+          "groups",
+          "items"
+        ]
+      },
+      "SearchQuery": {
+        "$id": "#/components/schemas/SearchQuery",
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 500
+      },
+      "SearchResult": {
+        "$id": "#/components/schemas/SearchResult",
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "note",
+              "daily-note"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "canonicalPath": {
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "pattern": "^\\/.*"
+          },
+          "revision": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "snippet": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kind",
+          "id",
+          "title",
+          "canonicalPath",
+          "url",
+          "revision",
+          "snippet"
+        ]
+      },
+      "SearchResponse": {
+        "$id": "#/components/schemas/SearchResponse",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/SearchResult"
+        }
+      },
+      "Recurrence": {
+        "$id": "#/components/schemas/Recurrence",
+        "type": "object",
+        "properties": {
+          "basis": {
+            "type": "string",
+            "enum": [
+              "schedule",
+              "completion"
+            ]
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "daily",
+              "weekly",
+              "monthly"
+            ]
+          },
+          "interval": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "weekdays": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "sun",
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri",
+                "sat"
+              ]
+            }
+          },
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+          }
+        },
+        "required": [
+          "basis",
+          "frequency",
+          "interval"
+        ]
+      },
+      "Occurrence": {
+        "$id": "#/components/schemas/Occurrence",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "original": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "scheduled": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          }
+        },
+        "required": [
+          "id",
+          "original",
+          "scheduled"
+        ]
+      },
+      "TaskStatus": {
+        "$id": "#/components/schemas/TaskStatus",
+        "type": "string",
+        "enum": [
+          "open",
+          "paused",
+          "done",
+          "canceled"
+        ]
+      },
+      "PageTask": {
+        "$id": "#/components/schemas/PageTask",
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/TaskStatus"
+          },
+          "list": {
+            "type": "string"
+          },
+          "scheduled": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "due": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "completed": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "occurrence": {
+            "$ref": "#/components/schemas/Occurrence"
+          },
+          "recurrence": {
+            "$ref": "#/components/schemas/Recurrence"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "OccurrenceRecord": {
+        "$id": "#/components/schemas/OccurrenceRecord",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "original": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "skipped"
+            ]
+          },
+          "at": {
+            "type": "string"
+          },
+          "markdown": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "original",
+          "outcome",
+          "at",
+          "markdown"
+        ]
+      },
+      "TaskView": {
+        "$id": "#/components/schemas/TaskView",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "page",
+              "inline"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/TaskStatus"
+          },
+          "list": {
+            "type": "string"
+          },
+          "scheduled": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "due": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "recurring": {
+            "type": "boolean"
+          },
+          "occurrence": {
+            "$ref": "#/components/schemas/Occurrence"
+          },
+          "recurrence": {
+            "$ref": "#/components/schemas/Recurrence"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "url"
+            ]
+          },
+          "overdue": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "status",
+          "recurring",
+          "revision",
+          "source",
+          "overdue"
+        ]
+      },
+      "TaskListResponse": {
+        "$id": "#/components/schemas/TaskListResponse",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/TaskView"
+        }
+      },
+      "AppConfig": {
+        "$id": "#/components/schemas/AppConfig",
+        "type": "object",
+        "properties": {
+          "autosave": {
+            "type": "object",
+            "properties": {
+              "debounceMs": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "maxDirtyMs": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "debounceMs",
+              "maxDirtyMs"
+            ]
+          },
+          "checkpoint": {
+            "type": "object",
+            "properties": {
+              "intervalMs": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "intervalMs"
+            ]
+          }
+        },
+        "required": [
+          "autosave",
+          "checkpoint"
+        ]
+      }
+    }
+  }
+}

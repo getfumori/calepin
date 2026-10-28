@@ -1,6 +1,6 @@
 # 04: Search index and Chinese search
 
-Status: open
+Status: resolved
 Type: task
 Blocked by: 03
 
@@ -42,3 +42,5 @@ and lexical search, following ADR-0005 and the research report.
 ## Comments
 
 Search, fingerprint rebuild, startup sync, and the research queries are done in `internal/index`. Open: type, Task List, and date filters on `/search`, and embedding only the Simplified gse dictionary (the binary is about 50 MB).
+
+Search filters by type, Task List, and date (`/api/v1/search?type=&list=&from=&to=`), applied before the result limit. The binary is now about 20 MB: `internal/index` embeds the Simplified dictionary itself, so gse's other dictionaries are dropped.

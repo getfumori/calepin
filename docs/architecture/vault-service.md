@@ -254,11 +254,14 @@ design's guarantees and can be replaced without a format change.
   Idempotency-Key.** Editor saves are already safe to retry through their
   base revision, and a crash before the index update is repaired by the
   startup content-hash sync.
-- **The HTTP contract is the Web client's zod schemas** in
-  `src/web/contracts/`, checked against the Go server by
-  `e2e/contracts.spec.ts`. The OpenAPI document and code generation remain
-  open.
+- **The HTTP contract is defined once in TypeScript.** The zod schemas in
+  `src/web/contracts/` and the endpoint table in
+  `src/web/contracts/api.ts` generate `api/openapi.json` with
+  `pnpm run openapi`; `test/web/openapi.test.ts` fails when the committed
+  document is stale, and `e2e/contracts.spec.ts` parses real Go responses
+  with the same schemas. Go handlers are written by hand rather than
+  generated; a future Go client can generate its types from the document.
 
-The binary embeds every gse dictionary even though only `zh_s` is loaded,
-which makes it about 50 MB. Slimming it with gse's `ne` build tag and an
-application-owned embed is open.
+The search dictionary is embedded by `internal/index` itself, so gse's
+other dictionaries are dropped by the linker and the stripped binary is
+about 20 MB.
