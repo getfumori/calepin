@@ -3,6 +3,7 @@
 package index
 
 import (
+	_ "embed"
 	"strings"
 	"sync"
 	"unicode"
@@ -15,6 +16,14 @@ import (
 
 // fingerprint changes whenever analysis or schema changes, forcing a rebuild.
 const fingerprint = "v1-nfkc-fold-t2s-gse-zh_s-bigram-ident-1"
+
+// zhDict is gse's Simplified Chinese dictionary (data/dict/zh/s_1.txt at
+// gse v1.1.0, derived from jieba). Loading it from here instead of through
+// gse's LoadDictEmbed leaves gse's other embedded dictionaries unreferenced,
+// so the linker drops them and the binary shrinks by about 27 MB.
+//
+//go:embed dict/zh_s_1.txt
+var zhDict string
 
 type analyzer struct {
 	seg  gse.Segmenter
@@ -33,7 +42,7 @@ func getAnalyzer() (*analyzer, error) {
 	analyzerOnce.Do(func() {
 		a := &analyzer{fold: cases.Fold()}
 		a.seg.SkipLog = true
-		if analyzerErr = a.seg.LoadDictEmbed("zh_s"); analyzerErr != nil {
+		if analyzerErr = a.seg.LoadDictStr(zhDict); analyzerErr != nil {
 			return
 		}
 		a.t2s, analyzerErr = opencc.New("t2s")

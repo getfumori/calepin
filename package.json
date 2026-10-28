@@ -14,7 +14,7 @@
     "build": "pnpm run clean && vite build",
     "typecheck": "vue-tsc -p tsconfig.web.json --noEmit && tsc -p tsconfig.tests.json",
     "test": "vitest run",
-    "build:binary": "pnpm run build && CGO_ENABLED=0 go build -o bin/fumori ./cmd/fumori",
+    "build:binary": "pnpm run build && CGO_ENABLED=0 go build -trimpath -ldflags=-s -o bin/fumori ./cmd/fumori",
     "test:e2e": "pnpm run build:binary && playwright test"
   },
   "dependencies": {
