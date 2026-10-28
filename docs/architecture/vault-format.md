@@ -1,11 +1,12 @@
-# Vault Format Draft
+# Vault Format
 
-Status: proposed. This draft defines version 1 of the canonical Vault format
-for Human Notes, Daily Notes, Memos, Tasks, and Occurrence records, following
-ADR-0001 and ADR-0004. Nothing here is frozen until each decision below is
-marked accepted. Terms follow [`GLOSSARY.md`](../../GLOSSARY.md).
+Status: accepted. This document defines version 1 of the canonical Vault
+format for Human Notes, Daily Notes, Memos, Tasks, and Occurrence records,
+following ADR-0001 and ADR-0004. Changing any persistent syntax here requires
+a new format version, never a silent rewrite of existing files. Terms follow
+[`GLOSSARY.md`](../../GLOSSARY.md).
 
-## Decisions to accept
+## Format rules
 
 ### F1. Reserved envelope
 
@@ -245,7 +246,7 @@ USB power is enough; no battery needed.
 
 The second Memo links to a Source created by client-side URL Capture.
 
-## Task state machine (accepted)
+## Task state machine
 
 `task.status` is shared by one-off and recurring Tasks:
 
@@ -289,7 +290,7 @@ Other rules:
 - Complete, skip, and undo carry the expected Occurrence ID, the base Object
   working revision, and an idempotency key.
 
-## Open questions for the next step
+## Open validation
 
 - Rich editor round-trip of block markers, which ADR-0003 requires before
   Memos can be edited in the rich surface.

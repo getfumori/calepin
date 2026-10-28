@@ -20,7 +20,7 @@ editor, autosave, and conflict handling will be connected to the Go API.
 - `test/web/`: Web client tests.
 - `GLOSSARY.md`: the domain language.
 - `docs/adr/`: architecture decisions.
-- `docs/architecture/vault-format-draft.md`: the proposed canonical file
+- `docs/architecture/vault-format.md`: the canonical file
   format and Task state machine.
 - `docs/research/`: primary-source research behind the decisions.
 - `docs/product/brand.md` and `docs/brand/`: name, brand direction, and the
