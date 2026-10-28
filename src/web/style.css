@@ -534,6 +534,25 @@ kbd {
   margin-bottom: 18px;
 }
 
+.search-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin: -8px 0 16px;
+}
+
+.search-filters select,
+.search-filters input {
+  min-width: 0;
+  height: 30px;
+  padding: 0 6px;
+  border: 1px solid #d4d2ca;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--forest-950);
+  font-size: 11px;
+}
+
 .search-field input {
   width: 100%;
   height: 40px;

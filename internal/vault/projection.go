@@ -395,17 +395,72 @@ type SearchResult struct {
 	Snippet string
 }
 
+// SearchFilter narrows a search by structure. Empty fields do not filter.
+// From and To bound the object's date: a Daily Note's date, or the local
+// date a note was created.
+type SearchFilter struct {
+	Type string
+	List string
+	From string
+	To   string
+}
+
+// ObjectDate is the date search filters use for an object.
+func (v *Vault) ObjectDate(o *Object) string {
+	if o.Kind == KindDaily {
+		return o.Date
+	}
+	created, err := time.Parse(time.RFC3339, o.Created)
+	if err != nil {
+		return ""
+	}
+	return created.In(v.Manifest.Timezone).Format(time.DateOnly)
+}
+
+func inList(o *Object, title string) bool {
+	matches := func(ref string) bool { return strings.EqualFold(strings.Trim(ref, "[]"), title) }
+	if o.Task != nil && matches(o.Task.List) {
+		return true
+	}
+	for _, it := range o.InlineTasks {
+		if ref, _ := it.Meta["list"].(string); matches(ref) {
+			return true
+		}
+	}
+	return false
+}
+
+func (v *Vault) keepLocked(f SearchFilter) func(path string) bool {
+	if f == (SearchFilter{}) {
+		return nil
+	}
+	return func(path string) bool {
+		o, ok := v.byPath[path]
+		if !ok {
+			return false
+		}
+		if f.Type != "" && (o.Type == nil || *o.Type != f.Type) {
+			return false
+		}
+		if f.List != "" && !inList(o, f.List) {
+			return false
+		}
+		date := v.ObjectDate(o)
+		return (f.From == "" || date >= f.From) && (f.To == "" || date <= f.To)
+	}
+}
+
 // Search runs a lexical query through the Search index.
-func (v *Vault) Search(query string) ([]SearchResult, error) {
+func (v *Vault) Search(query string, f SearchFilter) ([]SearchResult, error) {
 	if v.index == nil {
 		return nil, nil
 	}
-	hits, err := v.index.Search(query, 50)
+	v.mu.RLock()
+	defer v.mu.RUnlock()
+	hits, err := v.index.Search(query, 50, v.keepLocked(f))
 	if err != nil {
 		return nil, err
 	}
-	v.mu.RLock()
-	defer v.mu.RUnlock()
 	var out []SearchResult
 	for _, hit := range hits {
 		if o, ok := v.byPath[hit.Path]; ok {

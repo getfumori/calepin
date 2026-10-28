@@ -104,7 +104,16 @@ const model = ref<OrganizationModelResponse>();
 const typeResult = ref<TypeResultResponse>();
 const viewResult = ref<SavedViewResultResponse>();
 const searchResults = ref<SearchResult[]>([]);
-const searchQuery = ref(new URLSearchParams(window.location.search).get("q") ?? "");
+const searchParams = new URLSearchParams(window.location.search);
+const searchQuery = ref(searchParams.get("q") ?? "");
+const searchFilter = ref({
+  type: searchParams.get("type") ?? "",
+  list: searchParams.get("list") ?? "",
+  from: searchParams.get("from") ?? "",
+  to: searchParams.get("to") ?? ""
+});
+const searchMessage = ref<string>();
+const taskLists = ref<string[]>([]);
 const searchInput = ref<HTMLInputElement>();
 const fatalError = ref<string>();
 const saveError = ref<string>();
@@ -448,6 +457,12 @@ async function load(): Promise<void> {
 
     if (mode === "search") {
       document.title = "Search — Fumori";
+      const listResponse = await fetch("/api/v1/types/task-list", { cache: "no-store" });
+      if (listResponse.ok) {
+        taskLists.value = typeResultResponseSchema
+          .parse(await listResponse.json())
+          .items.map((item) => item.title);
+      }
       if (searchQuery.value) {
         await runSearch();
       }
@@ -733,25 +748,29 @@ async function runSearch(): Promise<void> {
     window.history.replaceState(null, "", "/search");
     return;
   }
-  window.history.replaceState(
-    null,
-    "",
-    `/search?q=${encodeURIComponent(query)}`
-  );
-  const response = await fetch(
-    `/api/v1/search?q=${encodeURIComponent(query)}`,
-    { cache: "no-store" }
-  );
-  if (!response.ok) {
-    if (sequence === searchSequence) {
-      fatalError.value = `Search failed (${response.status})`;
-    }
+const params = new URLSearchParams({ q: query });
+  for (const [key, value] of Object.entries(searchFilter.value)) {
+    if (value) params.set(key, value);
+  }
+  window.history.replaceState(null, "", `/search?${params}`);
+  const response = await fetch(`/api/v1/search?${params}`, { cache: "no-store" });
+  if (sequence !== searchSequence) {
     return;
   }
-  const results = searchResponseSchema.parse(await response.json());
-  if (sequence === searchSequence) {
-    searchResults.value = results;
+  if (response.status === 400) {
+    const detail = (await response.json().catch(() => undefined)) as
+      | { message?: string }
+      | undefined;
+    searchResults.value = [];
+    searchMessage.value = detail?.message ?? "This search cannot run.";
+    return;
   }
+  if (!response.ok) {
+    fatalError.value = `Search failed (${response.status})`;
+    return;
+  }
+  searchMessage.value = undefined;
+  searchResults.value = searchResponseSchema.parse(await response.json());
 }
 
 async function openSearch(): Promise<void> {
@@ -863,7 +882,22 @@ onBeforeUnmount(() => {
             @input="runSearch"
           />
         </label>
-        <p v-if="searchQuery && searchResults.length === 0" class="empty-copy">
+        <div class="search-filters">
+          <select v-model="searchFilter.type" aria-label="Filter by type" @change="runSearch">
+            <option value="">Any type</option>
+            <option v-for="type in model?.types ?? []" :key="type.key" :value="type.key">
+              {{ type.name }}
+            </option>
+          </select>
+          <select v-model="searchFilter.list" aria-label="Filter by Task List" @change="runSearch">
+            <option value="">Any list</option>
+            <option v-for="list in taskLists" :key="list" :value="list">{{ list }}</option>
+          </select>
+          <input v-model="searchFilter.from" type="date" aria-label="From date" @change="runSearch" />
+          <input v-model="searchFilter.to" type="date" aria-label="To date" @change="runSearch" />
+        </div>
+        <p v-if="searchMessage" class="empty-copy" role="status">{{ searchMessage }}</p>
+        <p v-else-if="searchQuery && searchResults.length === 0" class="empty-copy">
           No matching notes.
         </p>
         <div class="knowledge-list search-results">

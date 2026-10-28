@@ -26,7 +26,9 @@ type Index interface {
 	Sync(objects []*Object) error
 	Put(o *Object) error
 	Remove(path string) error
-	Search(query string, limit int) ([]Hit, error)
+	// Search ranks passages; keep, when set, drops objects by path before
+	// the limit applies, so filtered results still fill the page.
+	Search(query string, limit int, keep func(path string) bool) ([]Hit, error)
 	Close() error
 }
 

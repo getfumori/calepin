@@ -275,7 +275,7 @@ func verified(normalized string, groups []group) bool {
 	return true
 }
 
-func (x *Index) Search(query string, limit int) ([]vault.Hit, error) {
+func (x *Index) Search(query string, limit int, keep func(path string) bool) ([]vault.Hit, error) {
 	groups, err := x.compile(query)
 	if err != nil {
 		return nil, err
@@ -285,7 +285,7 @@ func (x *Index) Search(query string, limit int) ([]vault.Hit, error) {
 		exprs[i] = "(" + g.expr + ")"
 	}
 	rows, err := x.db.Query(`SELECT path, original, normalized FROM units WHERE units MATCH ?
-		ORDER BY bm25(units, 0, 0, 0, 8.0, 1.0, 4.0, 0.5) LIMIT 500`, strings.Join(exprs, " AND "))
+		ORDER BY bm25(units, 0, 0, 0, 8.0, 1.0, 4.0, 0.5) LIMIT 2000`, strings.Join(exprs, " AND "))
 	if err != nil {
 		return nil, err
 	}
@@ -297,7 +297,7 @@ func (x *Index) Search(query string, limit int) ([]vault.Hit, error) {
 		if err := rows.Scan(&path, &original, &normalized); err != nil {
 			return nil, err
 		}
-		if seen[path] || !verified(normalized, groups) {
+		if seen[path] || (keep != nil && !keep(path)) || !verified(normalized, groups) {
 			continue
 		}
 		seen[path] = true

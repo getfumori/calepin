@@ -75,7 +75,7 @@ func TestChineseSearch(t *testing.T) {
 		"E_CONNRESET": {want: []string{"网络错误"}},
 	}
 	for query, c := range cases {
-		results, err := v.Search(query)
+		results, err := v.Search(query, vault.SearchFilter{})
 		if err != nil {
 			t.Fatalf("%s: %v", query, err)
 		}
@@ -97,7 +97,7 @@ func TestChineseSearch(t *testing.T) {
 			}
 		}
 	}
-	if _, err := v.Search("备"); err != ErrQueryTooShort {
+	if _, err := v.Search("备", vault.SearchFilter{}); err != ErrQueryTooShort {
 		t.Fatalf("single character query: %v", err)
 	}
 }
@@ -105,7 +105,7 @@ func TestChineseSearch(t *testing.T) {
 func TestIndexRebuildsFromVault(t *testing.T) {
 	v, root, state := openTestVault(t)
 	addNote(t, v, "服务器备份策略", "restic 快照")
-	before, _ := v.Search("备份")
+	before, _ := v.Search("备份", vault.SearchFilter{})
 	v.Close()
 	if err := exec.Command("rm", "-rf", state+"/index").Run(); err != nil {
 		t.Fatal(err)
@@ -115,8 +115,44 @@ func TestIndexRebuildsFromVault(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer reopened.Close()
-	after, _ := reopened.Search("备份")
+	after, _ := reopened.Search("备份", vault.SearchFilter{})
 	if len(before) != 1 || len(after) != 1 || before[0].Object.Path != after[0].Object.Path {
 		t.Fatalf("rebuild changed results: %v vs %v", before, after)
+	}
+}
+
+func TestSearchFilters(t *testing.T) {
+	v, _, _ := openTestVault(t)
+	addNote(t, v, "服务器备份策略", "restic 快照")
+	list, err := v.CreateNote("task-list", "家庭服务器")
+	if err != nil {
+		t.Fatal(err)
+	}
+	list, _ = v.SaveNote(list.ID, vault.NoteSave{Format: "rich", BaseRevision: list.Revision, BodyMarkdown: "# 家庭服务器\n\n备份相关事项"})
+	if _, err := v.Capture("", "检查备份", true, "[[家庭服务器]]"); err != nil {
+		t.Fatal(err)
+	}
+	titles := func(f vault.SearchFilter) []string {
+		results, err := v.Search("备份", f)
+		if err != nil {
+			t.Fatal(err)
+		}
+		var out []string
+		for _, r := range results {
+			out = append(out, r.Object.Title)
+		}
+		return out
+	}
+	if got := titles(vault.SearchFilter{}); len(got) != 3 {
+		t.Fatalf("unfiltered: %v", got)
+	}
+	if got := titles(vault.SearchFilter{Type: "task-list"}); len(got) != 1 || got[0] != "家庭服务器" {
+		t.Fatalf("type filter: %v", got)
+	}
+	if got := titles(vault.SearchFilter{List: "家庭服务器"}); len(got) != 1 || got[0] != "2026-10-27" {
+		t.Fatalf("list filter: %v", got)
+	}
+	if got := titles(vault.SearchFilter{From: "2026-10-28"}); len(got) != 0 {
+		t.Fatalf("date filter: %v", got)
 	}
 }

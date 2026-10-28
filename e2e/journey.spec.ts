@@ -89,6 +89,11 @@ test("write Today, capture memos, find notes, and survive a restart", async ({
   const results = page.locator(".search-results");
   await expect(results).toContainText("ESP32-S3 摄像头小车");
   await expect(results).toContainText(/\d{4}-\d{2}-\d{2}/);
+  await page.getByLabel("Filter by type").selectOption("daily-note");
+  await expect(results).not.toContainText("ESP32-S3 摄像头小车");
+  await expect(results).toContainText(/\d{4}-\d{2}-\d{2}/);
+  await page.getByRole("searchbox", { name: "Search notes" }).fill("备");
+  await expect(page.getByRole("status").filter({ hasText: "two Chinese characters" })).toBeVisible();
 
   await stop(server.child);
   const dailyDir = join(vault, "human", "daily");

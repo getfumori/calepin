@@ -557,9 +557,12 @@ func (s *server) search(w http.ResponseWriter, r *http.Request) error {
 	if query == "" || len(query) > 500 {
 		return badRequest{"query must be 1 to 500 characters"}
 	}
-	results, err := s.v.Search(query)
+	params := r.URL.Query()
+	filter := vault.SearchFilter{Type: params.Get("type"), List: params.Get("list"), From: params.Get("from"), To: params.Get("to")}
+	results, err := s.v.Search(query, filter)
 	if err != nil {
-		return badRequest{err.Error()}
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid_query", "message": err.Error()})
+		return nil
 	}
 	out := []map[string]any{}
 	for _, hit := range results {
