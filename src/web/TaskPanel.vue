@@ -26,6 +26,7 @@ const repeat = ref<"none" | Recurrence["frequency"]>("none");
 const interval = ref(1);
 const basis = ref<Recurrence["basis"]>("schedule");
 const newList = ref("");
+const newDue = ref("");
 
 const weekdayNames = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
@@ -68,6 +69,7 @@ function ruleLabel(rule: Recurrence): string {
 function make(): void {
   const body: Record<string, unknown> = { scheduled: firstDate.value };
   if (newList.value) body.list = `[[${newList.value}]]`;
+  if (newDue.value && repeat.value === "none") body.due = newDue.value;
   if (repeat.value !== "none") {
     const rule: Recurrence = {
       basis: basis.value,
@@ -114,6 +116,7 @@ function setList(event: Event): void {
             <option value="monthly">Monthly</option>
           </select>
         </label>
+        <label v-if="repeat === 'none'">Due <input v-model="newDue" type="date" /></label>
         <template v-if="repeat !== 'none'">
           <label>Every <input v-model.number="interval" type="number" min="1" /></label>
           <label>
@@ -139,10 +142,34 @@ function setList(event: Event): void {
       <div class="task-summary">
         <span class="task-status" :data-status="props.task.status">{{ props.task.status }}</span>
         <span v-if="props.task.recurrence">{{ ruleLabel(props.task.recurrence) }}</span>
-        <span v-if="scheduled" :class="{ overdue }">
-          {{ recurring ? "Next round" : "Scheduled" }} {{ scheduled }}
-        </span>
-        <span v-if="props.task.due">Due {{ props.task.due }}</span>
+        <span v-if="recurring && scheduled" :class="{ overdue }">Next round {{ scheduled }}</span>
+        <label v-if="!recurring" :class="{ overdue }">
+          Scheduled
+          <input
+            type="date"
+            :value="scheduled ?? ''"
+            aria-label="Scheduled date"
+            @change="emit('command', 'update', { scheduled: ($event.target as HTMLInputElement).value })"
+          />
+        </label>
+        <label v-if="!recurring">
+          Due
+          <input
+            type="date"
+            :value="props.task.due ?? ''"
+            aria-label="Due date"
+            @change="emit('command', 'update', { due: ($event.target as HTMLInputElement).value })"
+          />
+        </label>
+        <label v-if="recurring">
+          Move this round
+          <input
+            type="date"
+            :value="scheduled ?? ''"
+            aria-label="Move this round"
+            @change="emit('command', 'update', { scheduled: ($event.target as HTMLInputElement).value })"
+          />
+        </label>
         <select
           :value="listTitle(props.task.list)"
           aria-label="Task List"

@@ -126,6 +126,10 @@ function reschedule(task: TaskView, event: Event): void {
   void command(task, "update", { scheduled: (event.target as HTMLInputElement).value });
 }
 
+function setDue(task: TaskView, event: Event): void {
+  void command(task, "update", { due: (event.target as HTMLInputElement).value });
+}
+
 function move(task: TaskView, event: Event): void {
   const title = (event.target as HTMLSelectElement).value;
   void command(task, "update", { list: title ? `[[${title}]]` : "" });
@@ -229,7 +233,7 @@ async function createNote(): Promise<void> {
               <div class="task-meta">
                 <span v-if="task.recurring" class="task-badge">Repeats</span>
                 <span v-if="task.overdue" class="task-overdue">Overdue</span>
-                <span v-if="task.due">Due {{ task.due }}</span>
+                <span v-if="task.due && task.status === 'done'">Due {{ task.due }}</span>
                 <a v-if="task.kind === 'inline'" :href="task.source.url">{{ task.source.title }}</a>
               </div>
             </div>
@@ -239,6 +243,14 @@ async function createNote(): Promise<void> {
               :value="task.scheduled ?? ''"
               :aria-label="`Schedule ${task.title}`"
               @change="reschedule(task, $event)"
+            />
+            <input
+              v-if="task.status !== 'done' && !task.recurring"
+              type="date"
+              :value="task.due ?? ''"
+              :aria-label="`Due date for ${task.title}`"
+              title="Due date"
+              @change="setDue(task, $event)"
             />
             <select
               v-if="task.status !== 'done'"

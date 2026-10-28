@@ -71,6 +71,9 @@ test("run a routine and triage a captured task", async ({ page, request }) => {
     await page.goto(`${url}/tasks?filter=unlisted`);
     const row = page.locator(".task-row", { hasText: "买网线" });
     await expect(row).toBeVisible();
+    const due = plusDays(today, 3);
+    await row.getByLabel("Due date for 买网线").fill(due);
+    await expect(row.getByLabel("Due date for 买网线")).toHaveValue(due);
     await row.getByLabel("List for 买网线").selectOption("家庭服务器");
     await expect(page.locator(".task-row", { hasText: "买网线" })).toHaveCount(0);
     await page.getByRole("button", { name: /家庭服务器/ }).click();
@@ -86,7 +89,7 @@ test("run a routine and triage a captured task", async ({ page, request }) => {
     const dailyDir = join(vault, "human", "daily");
     const daily = readdirSync(dailyDir, { recursive: true }).map(String).find((f) => f.endsWith(".md"))!;
     expect(readFileSync(join(dailyDir, daily), "utf8")).toMatch(
-      /- \[x\] 买网线 <!-- fumori:task \{"id":"t_[0-9A-Z]{12}","list":"\[\[家庭服务器\]\]","completed":/
+      /- \[x\] 买网线 <!-- fumori:task \{"id":"t_[0-9A-Z]{12}","list":"\[\[家庭服务器\]\]","due":"\d{4}-\d{2}-\d{2}","completed":/
     );
   } finally {
     child.kill("SIGTERM");
