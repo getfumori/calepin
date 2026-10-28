@@ -149,5 +149,6 @@ test-results/
 # Local agent artifacts and Go build output
 .audit/
 bin/
+!internal/webassets/dist/
 internal/webassets/dist/*
 !internal/webassets/dist/.keep
