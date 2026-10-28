@@ -1,0 +1,33 @@
+# 06: OpenAPI contract and Web client
+
+Status: open
+Type: task
+Blocked by: 05
+
+## What
+
+Define the HTTP API once in `api/openapi.yaml`, generate Go server stubs and
+TypeScript types from it, connect the Vue Web client, and embed its build in
+the binary.
+
+## Scope
+
+- OpenAPI 3.1 document covering every endpoint from issues 03 to 05, with
+  `ETag`, `If-Match`, `Idempotency-Key`, error and conflict shapes, and
+  field selection and pagination for list endpoints.
+- Code generation for Go handlers and TypeScript types, run by a single
+  command and checked in CI for drift.
+- Replace `src/web/contracts/` with the generated types; adapt the Web client
+  to the Go endpoints without adding new UI.
+- `internal/webassets`: embed the Vite build; `fumori serve` serves it with
+  no-store for knowledge responses and the Ephemeral knowledge client rules.
+- CI: Go tests with `CGO_ENABLED=0` on Linux and macOS, Web typecheck,
+  tests, and build, then a binary smoke test.
+
+## Acceptance
+
+- One built binary bootstraps a Vault, serves the Web client, and lets a
+  browser create, edit, link, and search notes and edit Today.
+- Changing the OpenAPI document without regenerating fails CI.
+- The binary listens on `127.0.0.1` by default and warns when bound
+  elsewhere, since the service has no authentication of its own.
