@@ -3,6 +3,16 @@ import { z } from "zod";
 import { dailyNoteDateSchema } from "./daily-note-date.js";
 import { organizationModelValueSchema } from "./organization-model.js";
 
+const memoEntrySchema = z.object({
+  id: z.string().min(1),
+  created: z.string(),
+  markdown: z.string()
+});
+
+export const dailyMemoSchema = memoEntrySchema.extend({
+  comments: z.array(memoEntrySchema)
+});
+
 export const dailyNoteResponseSchema = z.object({
   id: z.uuid(),
   date: dailyNoteDateSchema,
@@ -18,7 +28,8 @@ export const dailyNoteResponseSchema = z.object({
   vault: z.object({
     id: z.uuid(),
     name: z.string().min(1)
-  })
+  }),
+  memos: z.array(dailyMemoSchema).default([])
 });
 
 const baseRevisionSchema = z.string().regex(/^[0-9a-f]{64}$/).nullable();
@@ -59,5 +70,6 @@ export const invalidCanonicalMarkdownResponseSchema = z.object({
   message: z.string().min(1)
 });
 
+export type DailyMemo = z.infer<typeof dailyMemoSchema>;
 export type DailyNoteResponse = z.infer<typeof dailyNoteResponseSchema>;
 export type SaveDailyNoteRequest = z.infer<typeof saveDailyNoteRequestSchema>;

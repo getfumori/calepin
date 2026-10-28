@@ -13,7 +13,9 @@
     "dev": "vite",
     "build": "pnpm run clean && vite build",
     "typecheck": "vue-tsc -p tsconfig.web.json --noEmit && tsc -p tsconfig.tests.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build:binary": "pnpm run build && CGO_ENABLED=0 go build -o bin/fumori ./cmd/fumori",
+    "test:e2e": "pnpm run build:binary && playwright test"
   },
   "dependencies": {
     "@tiptap/core": "3.29.0",
@@ -25,6 +27,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "1.62.0",
     "@types/node": "24.10.1",
     "@vitejs/plugin-vue": "6.0.8",
     "typescript": "6.0.3",

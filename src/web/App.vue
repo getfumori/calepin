@@ -26,6 +26,7 @@ import {
 } from "./contracts/organization-model";
 import DocumentInspector from "./DocumentInspector.vue";
 import KnowledgeApp from "./KnowledgeApp.vue";
+import MemoStream from "./MemoStream.vue";
 import PrimarySidebar from "./PrimarySidebar.vue";
 import RawMarkdownEditor from "./RawMarkdownEditor.vue";
 import RichMarkdownEditor from "./RichMarkdownEditor.vue";
@@ -359,6 +360,54 @@ function updateMetadata(
 function updateRawSource(sourceMarkdown: string): void {
   rawDraft.value = sourceMarkdown;
   markDraftDirty({ format: "raw", sourceMarkdown });
+}
+
+async function postMemo(url: string, body: unknown): Promise<void> {
+  if (!note.value) {
+    return;
+  }
+  try {
+    await autosave.value?.flush();
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Idempotency-Key": crypto.randomUUID()
+      },
+      body: JSON.stringify(body)
+    });
+    if (!response.ok) {
+      const detail = (await response.json().catch(() => undefined)) as
+        | { message?: string }
+        | undefined;
+      throw new Error(detail?.message ?? `Capture failed (${response.status})`);
+    }
+    const refreshed = await fetch(`/api/v1/daily/${note.value.date}`, {
+      cache: "no-store"
+    });
+    const current = dailyNoteResponseSchema.parse(await refreshed.json());
+    const wasMissing = !note.value.exists;
+    note.value = current;
+    rawDraft.value = current.sourceMarkdown ?? "";
+    if (wasMissing || !autosave.value) {
+      configureAutosave(current);
+    } else if (current.revision) {
+      autosave.value.resolveConflict({
+        currentRevision: current.revision,
+        keepDraft: false
+      });
+    }
+  } catch (reason) {
+    saveError.value = explainError(reason, "The memo could not be saved.");
+  }
+}
+
+function captureMemo(text: string, task: boolean): void {
+  void postMemo("/api/v1/capture", { text, task });
+}
+
+function commentMemo(memoId: string, text: string): void {
+  void postMemo(`/api/v1/memos/${memoId}/comments`, { text });
 }
 
 async function createHistoricalNote(): Promise<void> {
@@ -720,6 +769,13 @@ onBeforeUnmount(() => {
         <p v-if="saveError" class="save-error" role="alert">
           {{ saveError }}
         </p>
+        <MemoStream
+          v-if="isTodayRoute || note.exists"
+          :memos="note.memos"
+          :can-capture="isTodayRoute"
+          @capture="captureMemo"
+          @comment="commentMemo"
+        />
       </section>
     </article>
   </main>

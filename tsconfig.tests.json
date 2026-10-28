@@ -6,12 +6,15 @@
     "moduleResolution": "Bundler",
     "types": [
       "node",
-      "vitest/globals"
+      "vitest/globals",
+      "@playwright/test"
     ],
     "noEmit": true
   },
   "include": [
     "test/**/*.ts",
+    "e2e/**/*.ts",
+    "playwright.config.ts",
     "vite.config.ts",
     "vitest.config.ts"
   ]

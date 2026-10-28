@@ -1,6 +1,8 @@
-import { rm } from "node:fs/promises";
+import { readdir, rm } from "node:fs/promises";
 
-await rm(new URL("../dist", import.meta.url), {
-  recursive: true,
-  force: true
-});
+const dist = new URL("../internal/webassets/dist/", import.meta.url);
+for (const entry of await readdir(dist)) {
+  if (entry !== ".keep") {
+    await rm(new URL(entry, dist), { recursive: true, force: true });
+  }
+}

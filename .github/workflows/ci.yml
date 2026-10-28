@@ -8,12 +8,16 @@ on:
       - master
 
 jobs:
-  web:
-    name: Web client
+  verify:
+    name: Go service and Web client
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
 
       - uses: pnpm/action-setup@v4
         with:
@@ -27,11 +31,20 @@ jobs:
       - name: Install the locked pnpm workspace
         run: pnpm install --frozen-lockfile
 
-      - name: Typecheck the Web client and tests
-        run: pnpm run typecheck
+      - name: Go vet and tests
+        env:
+          CGO_ENABLED: "0"
+        run: |
+          go vet ./...
+          go test ./...
 
-      - name: Run Web client tests
-        run: pnpm test
+      - name: Typecheck and test the Web client
+        run: |
+          pnpm run typecheck
+          pnpm test
 
-      - name: Build the Web client
-        run: pnpm run build
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build the binary and run end-to-end checks
+        run: pnpm run test:e2e
