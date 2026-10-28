@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/getfumori/fumori/internal/format"
 )
 
 var testNow = time.Date(2026, 10, 27, 23, 30, 0, 0, time.FixedZone("PDT", -7*3600))
@@ -141,10 +143,10 @@ func TestDailyCaptureAndComments(t *testing.T) {
 	if _, err := v.SaveDaily("2026-10-20", NoteSave{Format: "rich", BodyMarkdown: "x"}); err != ErrExplicitCreation {
 		t.Fatalf("past date needs explicit creation: %v", err)
 	}
-	if _, err := v.Capture("", "旧手机当摄像头", false); err != nil {
+	if _, err := v.Capture("", "旧手机当摄像头", false, ""); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := v.Capture("", "测试延迟", true); err != nil {
+	if _, err := v.Capture("", "测试延迟", true, ""); err != nil {
 		t.Fatal(err)
 	}
 	view, _ := v.Daily("2026-10-27")
@@ -170,36 +172,26 @@ func TestDailyCaptureAndComments(t *testing.T) {
 	}
 }
 
-const recurringTask = `task:
-  status: open
-  timezone: America/Los_Angeles
-  occurrence:
-    id: o_FIRST000000
-    original: "2026-11-01"
-    scheduled: "2026-11-01"
-  recurrence:
-    basis: schedule
-    frequency: weekly
-    interval: 1
-    weekdays: [sun]
-`
-
 func TestRecurringTaskCommands(t *testing.T) {
 	v := newVault(t)
 	o := mustNote(t, v, "Server check", "# Server check\n\n## Procedure\n\n- check backups")
-	o, err := v.SaveNote(o.ID, NoteSave{Format: "raw", BaseRevision: o.Revision, Source: strings.Replace(o.Source, "aliases: []\n", "aliases: []\n"+recurringTask, 1)})
-	if err != nil {
+	first := "2026-11-01"
+	weekly := &format.Recurrence{Basis: format.BasisSchedule, Frequency: format.Weekly, Interval: 1, Weekdays: []string{"sun"}}
+	if _, err := v.TaskAction(TaskCommand{TaskID: o.ID, Action: "make", Fingerprint: "m", Scheduled: &first, Recurrence: weekly}); err != nil {
 		t.Fatal(err)
 	}
+	o, _ = v.Note(o.ID)
+	occurrence := o.Task.Occurrence.ID
+
 	testNow = time.Date(2026, 11, 2, 9, 30, 0, 0, time.FixedZone("PST", -8*3600))
 	defer func() { testNow = time.Date(2026, 10, 27, 23, 30, 0, 0, time.FixedZone("PDT", -7*3600)) }()
-	complete := TaskCommand{TaskID: o.ID, Action: "complete", ExpectedOccurrence: "o_FIRST000000", IdempotencyKey: "k1", Fingerprint: "f1", Notes: "周一补做"}
-	first, err := v.TaskAction(complete)
+	complete := TaskCommand{TaskID: o.ID, Action: "complete", ExpectedOccurrence: occurrence, IdempotencyKey: "k1", Fingerprint: "f1", Notes: "周一补做"}
+	firstResponse, err := v.TaskAction(complete)
 	if err != nil {
 		t.Fatal(err)
 	}
 	again, err := v.TaskAction(complete)
-	if err != nil || string(again) != string(first) {
+	if err != nil || string(again) != string(firstResponse) {
 		t.Fatalf("same key must replay: %v", err)
 	}
 	complete.IdempotencyKey = "k2"
@@ -207,20 +199,24 @@ func TestRecurringTaskCommands(t *testing.T) {
 		t.Fatalf("a retry for an already recorded occurrence succeeds: %v", err)
 	}
 	o, _ = v.Note(o.ID)
-	records := 0
-	for _, b := range o.Blocks {
-		if b.Kind == "occurrence" {
-			records++
-		}
+	if len(o.Blocks) != 1 || o.Task.Occurrence.Original != "2026-11-08" {
+		t.Fatalf("late completion: %d records, next %s", len(o.Blocks), o.Task.Occurrence.Original)
 	}
-	if records != 1 || o.Task.Occurrence.Original != "2026-11-08" {
-		t.Fatalf("late completion: %d records, next %s", records, o.Task.Occurrence.Original)
+
+	free, _ := NoteParts(o)
+	if strings.Contains(free, "History") || strings.Contains(free, "fumori:") {
+		t.Fatalf("the editor body must not contain history: %q", free)
 	}
+	o, err = v.SaveNote(o.ID, NoteSave{Format: "rich", BaseRevision: o.Revision, BodyMarkdown: free + "\n- check disks"})
+	if err != nil || len(o.Blocks) != 1 || !strings.HasSuffix(strings.TrimSpace(o.Source), "<!-- /fumori:occurrence "+occurrence+" -->") {
+		t.Fatalf("a rich save must keep the history at the end: %v\n%s", err, o.Source)
+	}
+
 	if _, err := v.TaskAction(TaskCommand{TaskID: o.ID, Action: "undo", ExpectedOccurrence: o.Task.Occurrence.ID, Fingerprint: "u"}); err != nil {
 		t.Fatal(err)
 	}
 	o, _ = v.Note(o.ID)
-	if o.Task.Occurrence.ID != "o_FIRST000000" || strings.Contains(o.Source, "fumori:occurrence") {
+	if o.Task.Occurrence.ID != occurrence || strings.Contains(o.Source, "fumori:occurrence") || strings.Contains(o.Source, "## History") {
 		t.Fatalf("undo must restore the previous occurrence:\n%s", o.Source)
 	}
 }
@@ -239,13 +235,13 @@ func TestCrashRecovery(t *testing.T) {
 			}
 			return nil
 		}
-		if _, err := v.Capture("key", "hello", false); err != errCrash {
+		if _, err := v.Capture("key", "hello", false, ""); err != errCrash {
 			t.Fatalf("%s: expected injected crash, got %v", point, err)
 		}
 		crashHook = nil
 		v.Close()
 		v = openVault(t, root, state)
-		if _, err := v.Capture("key", "hello", false); err != nil {
+		if _, err := v.Capture("key", "hello", false, ""); err != nil {
 			t.Fatalf("%s: retry: %v", point, err)
 		}
 		view, _ := v.Daily(v.Today())

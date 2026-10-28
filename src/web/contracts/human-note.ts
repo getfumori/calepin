@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { organizationModelValueSchema } from "./organization-model.js";
+import { occurrenceRecordSchema, pageTaskSchema } from "./tasks.js";
 
 const revisionSchema = z.string().regex(/^[0-9a-f]{64}$/);
 
@@ -23,7 +24,9 @@ export const humanNoteResponseSchema = z.object({
   vault: z.object({
     id: z.uuid(),
     name: z.string().min(1)
-  })
+  }),
+  task: pageTaskSchema.nullable().default(null),
+  occurrences: z.array(occurrenceRecordSchema).default([])
 });
 
 export const createHumanNoteRequestSchema = z.discriminatedUnion("context", [

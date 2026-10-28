@@ -321,7 +321,8 @@ func (v *Vault) applyNoteSave(cur *Object, req NoteSave) (string, error) {
 	case "raw":
 		return req.Source, nil
 	case "rich":
-		return composeNote(cur.Doc.Frontmatter(), req.BodyMarkdown), nil
+		_, records := NoteParts(cur)
+		return composeNote(cur.Doc.Frontmatter(), composeNoteBody(req.BodyMarkdown, records)), nil
 	case "metadata", "document":
 		source, err := v.editMetadata(cur, req)
 		if err != nil {
@@ -332,7 +333,8 @@ func (v *Vault) applyNoteSave(cur *Object, req NoteSave) (string, error) {
 			if err != nil {
 				return "", err
 			}
-			source = composeNote(doc.Frontmatter(), req.BodyMarkdown)
+			_, records := NoteParts(cur)
+			source = composeNote(doc.Frontmatter(), composeNoteBody(req.BodyMarkdown, records))
 		}
 		return source, nil
 	}

@@ -27,6 +27,7 @@ import {
 import DocumentInspector from "./DocumentInspector.vue";
 import KnowledgeApp from "./KnowledgeApp.vue";
 import MemoStream from "./MemoStream.vue";
+import TasksApp from "./TasksApp.vue";
 import PrimarySidebar from "./PrimarySidebar.vue";
 import RawMarkdownEditor from "./RawMarkdownEditor.vue";
 import RichMarkdownEditor from "./RichMarkdownEditor.vue";
@@ -57,6 +58,7 @@ const historicalDate = routeMatch?.[1];
 const isTodayRoute =
   window.location.pathname === "/" || window.location.pathname === "/today";
 const isDailyView = isTodayRoute || historicalDate !== undefined;
+const isTasksView = window.location.pathname === "/tasks";
 
 const config = ref<AppConfig>();
 const note = ref<DailyNoteResponse>();
@@ -583,7 +585,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <KnowledgeApp v-if="!isDailyView" />
+  <TasksApp v-if="isTasksView" />
+  <KnowledgeApp v-else-if="!isDailyView" />
   <main
     v-else
     class="app-shell"

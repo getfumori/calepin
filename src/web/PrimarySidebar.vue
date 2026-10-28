@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   vaultName: string | undefined;
-  active: "today" | "notes" | "inbox" | "types" | "views" | "archive";
+  active: "today" | "tasks" | "notes" | "inbox" | "types" | "views" | "archive";
 }>();
 
 const emit = defineEmits<{
@@ -45,6 +45,16 @@ function navigate(event: MouseEvent, destination: string): void {
       >
         <span class="nav-glyph today-glyph" aria-hidden="true"></span>
         Today
+      </a>
+      <a
+        class="nav-item"
+        :class="{ active: active === 'tasks' }"
+        href="/tasks"
+        :aria-current="active === 'tasks' ? 'page' : undefined"
+        @click="navigate($event, '/tasks')"
+      >
+        <span class="nav-glyph inbox-glyph" aria-hidden="true"></span>
+        Tasks
       </a>
       <a
         class="nav-item"

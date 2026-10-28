@@ -10,6 +10,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/getfumori/fumori/internal/format"
 	"github.com/getfumori/fumori/internal/vault"
 )
 
@@ -40,12 +41,13 @@ func (s *server) capture(w http.ResponseWriter, r *http.Request) error {
 	var req struct {
 		Text string `json:"text"`
 		Task bool   `json:"task"`
+		List string `json:"list"`
 	}
 	key, _, err := readCommand(r, &req)
 	if err != nil {
 		return err
 	}
-	body, err := s.v.Capture(key, req.Text, req.Task)
+	body, err := s.v.Capture(key, req.Text, req.Task, req.List)
 	if err != nil {
 		return err
 	}
@@ -77,12 +79,13 @@ func (s *server) tasks(w http.ResponseWriter, r *http.Request) error {
 
 func (s *server) taskAction(w http.ResponseWriter, r *http.Request) error {
 	var req struct {
-		ExpectedOccurrence string  `json:"expectedOccurrence"`
-		BaseRevision       string  `json:"baseRevision"`
-		Notes              string  `json:"notes"`
-		Scheduled          *string `json:"scheduled"`
-		Due                *string `json:"due"`
-		List               *string `json:"list"`
+		ExpectedOccurrence string             `json:"expectedOccurrence"`
+		BaseRevision       string             `json:"baseRevision"`
+		Notes              string             `json:"notes"`
+		Scheduled          *string            `json:"scheduled"`
+		Due                *string            `json:"due"`
+		List               *string            `json:"list"`
+		Recurrence         *format.Recurrence `json:"recurrence"`
 	}
 	key, fingerprint, err := readCommand(r, &req)
 	if err != nil {
@@ -94,7 +97,7 @@ func (s *server) taskAction(w http.ResponseWriter, r *http.Request) error {
 	body, err := s.v.TaskAction(vault.TaskCommand{
 		TaskID: r.PathValue("id"), Action: r.PathValue("action"), ExpectedOccurrence: req.ExpectedOccurrence,
 		BaseRevision: req.BaseRevision, IdempotencyKey: key, Fingerprint: fingerprint, Notes: req.Notes,
-		Scheduled: req.Scheduled, Due: req.Due, List: req.List,
+		Scheduled: req.Scheduled, Due: req.Due, List: req.List, Recurrence: req.Recurrence,
 	})
 	if err != nil {
 		return err

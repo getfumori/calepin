@@ -1,7 +1,6 @@
 package vault
 
 import (
-	"regexp"
 	"sort"
 	"strings"
 
@@ -16,8 +15,9 @@ func DailyParts(o *Object) (free, stream string) { return dailyParts(o) }
 func (v *Vault) NewDailySource(date string) string { return v.newDailySource(date, "") }
 
 // Capture appends a Memo to today's Daily Note, creating the note on first
-// use. With task set, the Memo is one Unlisted Inline Task.
-func (v *Vault) Capture(key, text string, task bool) ([]byte, error) {
+// use. With task set, the Memo is one Inline Task in list, or an Unlisted
+// Task when list is empty.
+func (v *Vault) Capture(key, text string, task bool, list string) ([]byte, error) {
 	text = strings.TrimSpace(text)
 	if text == "" {
 		return nil, invalidf("capture text is empty")
@@ -27,10 +27,17 @@ func (v *Vault) Capture(key, text string, task bool) ([]byte, error) {
 		return nil, err
 	}
 	created := v.now()
-	return v.command(key, "capture\x00"+text+boolString(task), dailyRelPath(date), func(cur *Object) (string, error) {
+	if list != "" && !wikilinkVal.MatchString(list) {
+		return nil, invalidf("list must be a wikilink")
+	}
+	return v.command(key, "capture\x00"+text+boolString(task)+"\x00"+list, dailyRelPath(date), func(cur *Object) (string, error) {
 		content := text
 		if task {
-			content = format.RenderInlineTask("", false, strings.ReplaceAll(text, "\n", " "), []format.KV{{Key: "id", Value: v.newBlockID("t")}})
+			meta := []format.KV{{Key: "id", Value: v.newBlockID("t")}}
+			if list != "" {
+				meta = append(meta, format.KV{Key: "list", Value: list})
+			}
+			content = format.RenderInlineTask("", false, strings.ReplaceAll(text, "\n", " "), meta)
 		}
 		block := format.RenderBlock(format.KindMemo, []format.KV{{Key: "id", Value: v.newBlockID("m")}, {Key: "created", Value: created}}, content)
 		return cur.Doc.WithBody(format.AppendBlock(cur.Doc.Body(), block)), nil
@@ -163,6 +170,7 @@ type TaskCommand struct {
 	Scheduled          *string
 	Due                *string
 	List               *string
+	Recurrence         *format.Recurrence
 }
 
 // TaskAction applies a command to a Page Task (by note ID) or an Inline Task
@@ -190,31 +198,15 @@ func (v *Vault) TaskAction(cmd TaskCommand) ([]byte, error) {
 	}, func(o *Object) any { return map[string]string{"id": o.ID, "revision": o.Revision} })
 }
 
-var historyHeading = regexp.MustCompile(`(?m)^## History\s*$`)
-var h2 = regexp.MustCompile(`(?m)^## `)
-
-// insertRecord adds an Occurrence record at the end of the History section,
-// creating the section when the note has none.
-func insertRecord(body, record string) string {
-	loc := historyHeading.FindStringIndex(body)
-	if loc == nil {
-		return format.AppendBlock(format.AppendBlock(body, "## History\n"), record)
-	}
-	end := len(body)
-	if next := h2.FindStringIndex(body[loc[1]:]); next != nil {
-		end = loc[1] + next[0]
-	}
-	section := strings.TrimRight(body[:end], "\n") + "\n\n" + record
-	if end < len(body) {
-		section += "\n"
-	}
-	return section + body[end:]
-}
-
 func (v *Vault) applyPageTask(cur *Object, cmd TaskCommand) (string, error) {
 	t := cur.Task
-	if t == nil {
+	switch {
+	case cmd.Action == "make":
+		return v.makePageTask(cur, cmd)
+	case t == nil:
 		return "", invalidf("note is not a task")
+	case cmd.Action == "remove":
+		return cur.Doc.Delete("task"), nil
 	}
 	task := *t
 	today := v.Today()
@@ -245,7 +237,11 @@ func (v *Vault) applyPageTask(cur *Object, cmd TaskCommand) (string, error) {
 		}, content)
 		next := domain.NextOccurrence(*task.Recurrence, occ.Original, today)
 		task.Occurrence = &format.Occurrence{ID: v.newBlockID("o"), Original: next, Scheduled: next}
-		doc, err := v.parseWithBody(cur, insertRecord(cur.Doc.Body(), record))
+		free, records := NoteParts(cur)
+		if records != "" {
+			records = strings.TrimRight(records, "\n") + "\n\n"
+		}
+		doc, err := v.parseWithBody(cur, "\n"+composeNoteBody(free, records+record))
 		if err != nil {
 			return "", err
 		}
@@ -283,6 +279,38 @@ func (v *Vault) applyPageTask(cur *Object, cmd TaskCommand) (string, error) {
 		}
 	default:
 		return "", invalidf("unknown task action %q", cmd.Action)
+	}
+	return cur.Doc.SetPageTask(task)
+}
+
+func (v *Vault) makePageTask(cur *Object, cmd TaskCommand) (string, error) {
+	if cur.Task != nil {
+		return "", &ConflictError{Message: "note is already a task"}
+	}
+	if cur.Kind != KindNote {
+		return "", invalidf("only Human Notes can become Page Tasks")
+	}
+	task := format.PageTask{Status: format.StatusOpen}
+	if cmd.Scheduled != nil {
+		task.Scheduled = *cmd.Scheduled
+	}
+	if cmd.Due != nil {
+		task.Due = *cmd.Due
+	}
+	if cmd.List != nil {
+		task.List = *cmd.List
+	}
+	if r := cmd.Recurrence; r != nil {
+		if task.Scheduled == "" {
+			return "", invalidf("a recurring task needs a first scheduled date")
+		}
+		task.Recurrence = r
+		task.Timezone = v.Manifest.Timezone.String()
+		task.Occurrence = &format.Occurrence{ID: v.newBlockID("o"), Original: task.Scheduled, Scheduled: task.Scheduled}
+		task.Scheduled = ""
+	}
+	if err := task.Validate(); err != nil {
+		return "", invalidf("%v", err)
 	}
 	return cur.Doc.SetPageTask(task)
 }
@@ -331,10 +359,14 @@ func (v *Vault) undoOccurrence(cur *Object, task format.PageTask, cmd TaskComman
 		return "", &ConflictError{Message: "no occurrence record to undo"}
 	}
 	body := cur.Doc.Body()
-	trimmed := strings.TrimRight(body[:last.Start], "\n") + "\n" + body[last.End:]
-	if last.End == len(body) {
-		trimmed = strings.TrimRight(body[:last.Start], "\n") + "\n"
+	free, _ := NoteParts(cur)
+	var kept []string
+	for _, b := range cur.Blocks {
+		if b.Start != last.Start {
+			kept = append(kept, body[b.Start:b.End])
+		}
 	}
+	trimmed := "\n" + composeNoteBody(free, strings.Join(kept, "\n"))
 	scheduled := last.MetaString("scheduled")
 	if scheduled == "" {
 		scheduled = last.MetaString("original")

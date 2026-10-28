@@ -34,31 +34,31 @@ const (
 
 // Recurrence is the rule that schedules the next Occurrence.
 type Recurrence struct {
-	Basis     Basis     `yaml:"basis"`
-	Frequency Frequency `yaml:"frequency"`
-	Interval  int       `yaml:"interval"`
-	Weekdays  []string  `yaml:"weekdays,omitempty"`
+	Basis     Basis     `yaml:"basis" json:"basis"`
+	Frequency Frequency `yaml:"frequency" json:"frequency"`
+	Interval  int       `yaml:"interval" json:"interval"`
+	Weekdays  []string  `yaml:"weekdays,omitempty" json:"weekdays,omitempty"`
 	// Day is the monthly day of month; a short month clamps to its last day.
-	Day int `yaml:"day,omitempty"`
+	Day int `yaml:"day,omitempty" json:"day,omitempty"`
 }
 
 // Occurrence is the current round of a recurring Task.
 type Occurrence struct {
-	ID        string `yaml:"id"`
-	Original  string `yaml:"original"`
-	Scheduled string `yaml:"scheduled"`
+	ID        string `yaml:"id" json:"id"`
+	Original  string `yaml:"original" json:"original"`
+	Scheduled string `yaml:"scheduled" json:"scheduled"`
 }
 
 // PageTask is the `task` property of a Human Note.
 type PageTask struct {
-	Status     TaskStatus  `yaml:"status"`
-	List       string      `yaml:"list,omitempty"`
-	Scheduled  string      `yaml:"scheduled,omitempty"`
-	Due        string      `yaml:"due,omitempty"`
-	Completed  string      `yaml:"completed,omitempty"`
-	Timezone   string      `yaml:"timezone,omitempty"`
-	Occurrence *Occurrence `yaml:"occurrence,omitempty"`
-	Recurrence *Recurrence `yaml:"recurrence,omitempty"`
+	Status     TaskStatus  `yaml:"status" json:"status"`
+	List       string      `yaml:"list,omitempty" json:"list,omitempty"`
+	Scheduled  string      `yaml:"scheduled,omitempty" json:"scheduled,omitempty"`
+	Due        string      `yaml:"due,omitempty" json:"due,omitempty"`
+	Completed  string      `yaml:"completed,omitempty" json:"completed,omitempty"`
+	Timezone   string      `yaml:"timezone,omitempty" json:"timezone,omitempty"`
+	Occurrence *Occurrence `yaml:"occurrence,omitempty" json:"occurrence,omitempty"`
+	Recurrence *Recurrence `yaml:"recurrence,omitempty" json:"recurrence,omitempty"`
 }
 
 func (t PageTask) Recurring() bool { return t.Recurrence != nil }

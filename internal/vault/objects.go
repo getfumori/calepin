@@ -271,6 +271,32 @@ func composeNote(frontmatter, body string) string {
 	return frontmatter + "\n" + strings.TrimRight(body, "\n") + "\n"
 }
 
+const historyHeadingLine = "## History"
+
+// NoteParts splits a Human Note body into the free text the editor owns and
+// the Occurrence records. The History heading that introduces the records is
+// layout, so it belongs to neither part.
+func NoteParts(o *Object) (free, records string) {
+	free, records = format.SplitFreeform(o.Doc.Body(), o.Blocks)
+	if records != "" {
+		free = strings.TrimSuffix(strings.TrimRight(free, "\n"), historyHeadingLine)
+	}
+	return strings.Trim(free, "\n"), records
+}
+
+// composeNoteBody keeps Occurrence records at the end of the body under one
+// History heading.
+func composeNoteBody(free, records string) string {
+	free = strings.Trim(free, "\n")
+	if records == "" {
+		return free
+	}
+	if free == "" {
+		return historyHeadingLine + "\n\n" + records
+	}
+	return free + "\n\n" + historyHeadingLine + "\n\n" + records
+}
+
 // dailyParts splits a Daily Note body into the free-form text under the date
 // heading and the Memo stream.
 func dailyParts(o *Object) (free, stream string) {

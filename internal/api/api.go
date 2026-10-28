@@ -178,13 +178,33 @@ func typeOf(o *vault.Object) any {
 }
 
 func (s *server) noteJSON(o *vault.Object) map[string]any {
+	free, _ := vault.NoteParts(o)
+	var task any
+	if o.Task != nil {
+		task = o.Task
+	}
 	return map[string]any{
 		"id": o.ID, "title": o.Title, "canonicalPath": o.Path, "revision": o.Revision,
-		"bodyMarkdown":   strings.TrimSuffix(strings.TrimPrefix(o.Doc.Body(), "\n"), "\n"),
+		"bodyMarkdown": free, "task": task, "occurrences": occurrencesJSON(o),
 		"sourceMarkdown": o.Source, "type": typeOf(o), "state": o.State,
 		"tags": strs(o.Tags), "aliases": strs(o.Aliases), "properties": o.Properties,
 		"relationships": o.Relationships, "vault": s.vaultRef(),
 	}
+}
+
+func occurrencesJSON(o *vault.Object) []map[string]any {
+	body := o.Doc.Body()
+	out := []map[string]any{}
+	for _, b := range o.Blocks {
+		if b.Kind != format.KindOccurrence {
+			continue
+		}
+		out = append(out, map[string]any{
+			"id": b.ID, "original": b.MetaString("original"), "outcome": b.MetaString("outcome"),
+			"at": b.MetaString("at"), "markdown": b.Content(body),
+		})
+	}
+	return out
 }
 
 func listItem(o *vault.Object) map[string]any {

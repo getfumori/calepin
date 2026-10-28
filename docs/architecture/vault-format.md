@@ -92,8 +92,12 @@ do not recur in the first release.
 ### F9. Occurrence records
 
 Each completed or skipped Occurrence appends an `occurrence` block at the
-end of the recurring Task's `## History` section, creating the section when
-it is missing. The block, not the heading, is the authority. Its id is the
+end of the recurring Task's body. Occurrence records always form the end of
+the body under one `## History` heading, which is written with the first
+record and removed with the last. The heading and records are layout owned
+by the service: the editor edits only the text before them, and saving that
+text keeps the records in place. The block, not the heading, is the
+authority. Its id is the
 Occurrence id, and its metadata records `original`, `scheduled` (the date
 it was planned for when acted on, used by undo), `outcome` (`completed` or
 `skipped`), and `at`.

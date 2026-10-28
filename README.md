@@ -37,9 +37,10 @@ Expose it only on a trusted network or behind an authenticating gateway.
   Inbox, Archive, Saved views, rename with link rewriting, and delete.
 - Mixed Chinese and English search, including two-character words and model
   numbers.
-- Page Tasks with recurrence and Inline Tasks through the HTTP API
-  (`GET /api/v1/tasks`, `POST /api/v1/tasks/{id}/complete|skip|undo|...`).
-  The Web client has no task screens yet.
+- Tasks. Any note can become a one-off or recurring Page Task from its
+  Task panel. Completing a round records your notes in the note's history and
+  schedules the next round. Quick capture can add Inline Tasks, and the Tasks
+  view groups them by Today, Unlisted, each Task List, and Done.
 - Autosave with conflict handling, Git checkpoints every 30 minutes and on
   shutdown, and crash recovery.
 

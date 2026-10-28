@@ -42,6 +42,7 @@ import {
 import PrimarySidebar from "./PrimarySidebar.vue";
 import RawMarkdownEditor from "./RawMarkdownEditor.vue";
 import RichMarkdownEditor from "./RichMarkdownEditor.vue";
+import TaskPanel from "./TaskPanel.vue";
 import {
   type AutosaveController,
   AutosaveConflictError,
@@ -217,6 +218,43 @@ const {
     saveStatus.value = status;
   }
 });
+
+async function taskCommand(
+  action: string,
+  body: Record<string, unknown>
+): Promise<void> {
+  if (!humanNote.value) return;
+  const id = humanNote.value.id;
+  try {
+    await autosave.value?.flush();
+    const response = await fetch(`/api/v1/tasks/${id}/${action}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Idempotency-Key": crypto.randomUUID()
+      },
+      body: JSON.stringify(body)
+    });
+    if (!response.ok) {
+      const detail = (await response.json().catch(() => undefined)) as
+        | { message?: string }
+        | undefined;
+      throw new Error(detail?.message ?? `Task update failed (${response.status})`);
+    }
+    const current = humanNoteResponseSchema.parse(
+      await (await fetch(`/api/v1/notes/${id}`, { cache: "no-store" })).json()
+    );
+    humanNote.value = current;
+    rawDraft.value = current.sourceMarkdown;
+    autosave.value?.resolveConflict({
+      currentRevision: current.revision,
+      keepDraft: false
+    });
+    saveError.value = undefined;
+  } catch (reason) {
+    saveError.value = explainError(reason, "The task could not be updated.");
+  }
+}
 
 function explainError(reason: unknown, fallback: string): string {
   return reason instanceof Error ? reason.message : fallback;
@@ -1075,6 +1113,12 @@ onBeforeUnmount(() => {
         <p class="document-date">Standalone Human Note</p>
         <h1>{{ humanNote.title }}</h1>
         <p class="canonical-path">{{ humanNote.canonicalPath }}</p>
+        <TaskPanel
+          :key="humanNote.id"
+          :task="humanNote.task"
+          :occurrences="humanNote.occurrences"
+          @command="taskCommand"
+        />
         <div class="writing-rule" aria-hidden="true"></div>
         <DocumentInspector
           v-if="inspectorOpen && model"
