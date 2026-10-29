@@ -104,7 +104,7 @@ function buildDocument(): unknown {
   return {
     openapi: "3.1.0",
     info: {
-      title: "Fumori Vault Service",
+      title: "Calepin Vault Service",
       version: "1",
       description:
         "Generated from src/web/contracts/api.ts by `pnpm run openapi`. Do not edit by hand. The service has no authentication of its own; it listens on loopback or behind an operator-controlled authenticating gateway, so no security scheme is declared."
@@ -117,7 +117,7 @@ function buildDocument(): unknown {
 
 test("api/openapi.json matches the contracts", () => {
   const generated = `${JSON.stringify(buildDocument(), null, 2)}\n`;
-  if (process.env.FUMORI_WRITE_OPENAPI === "1") {
+  if (process.env.CALEPIN_WRITE_OPENAPI === "1") {
     writeFileSync(documentPath, generated);
   }
   const committed = readFileSync(documentPath, "utf8");

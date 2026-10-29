@@ -35,7 +35,7 @@ function submitComment(memoId: string): void {
 }
 
 function plain(markdown: string): string {
-  return markdown.replace(/\s*<!-- fumori:task \{.*?\} -->/g, "");
+  return markdown.replace(/\s*<!-- calepin:task \{.*?\} -->/g, "");
 }
 </script>
 

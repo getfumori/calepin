@@ -1,6 +1,6 @@
 # Tasks and Memos live in Markdown
 
-Fumori manages tasks, including recurring tasks, and quick-capture Memos
+Calepin manages tasks, including recurring tasks, and quick-capture Memos
 itself instead of relying on separate apps, and stores both inside ordinary
 notes rather than in their own stores. A Page Task is a `task` property on a
 Human Note; an Inline Task is an explicitly marked checkbox; each Occurrence

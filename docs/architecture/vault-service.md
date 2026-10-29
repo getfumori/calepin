@@ -8,13 +8,13 @@ and ADR-0005, and implements the [Vault Format](vault-format.md). Terms follow
 
 ## Process and storage
 
-One `fumori` binary serves one Vault per process in the first release. It owns
+One `calepin` binary serves one Vault per process in the first release. It owns
 three storage areas:
 
 | Area | Location | Contents | Backup |
 | --- | --- | --- | --- |
-| Vault repository | `--vault <path>` | Canonical Markdown, attachments, `.fumori/`, `.git/` | Required. Sufficient for all knowledge and task state. |
-| Runtime state | `--state <path>`, default `$XDG_STATE_HOME/fumori/<vault-id>/` | `state.db`: write intents, transaction journals, idempotency records; later credentials | Optional. Loss forfeits in-flight deduplication only; later, credentials must be reissued. |
+| Vault repository | `--vault <path>` | Canonical Markdown, attachments, `.calepin/`, `.git/` | Required. Sufficient for all knowledge and task state. |
+| Runtime state | `--state <path>`, default `$XDG_STATE_HOME/calepin/<vault-id>/` | `state.db`: write intents, transaction journals, idempotency records; later credentials | Optional. Loss forfeits in-flight deduplication only; later, credentials must be reissued. |
 | Search index | `<state>/index/` | `index-<generation>.db` | Never. Rebuilt from the repository. |
 
 Runtime state and the index never live inside the Vault repository, so a
@@ -27,7 +27,7 @@ to start if another process holds it.
 ## Module boundaries
 
 ```
-cmd/fumori            CLI: bootstrap, serve, check, reindex, checkpoint
+cmd/calepin            CLI: bootstrap, serve, check, reindex, checkpoint
 internal/format       Pure parse/edit/serialize of Vault format v1. No I/O.
 internal/domain       Pure business rules: tasks, recurrence, memos, capture.
 internal/vault        The Vault module: reads, writes, transactions, recovery.
@@ -181,7 +181,7 @@ simpler and the staged files already hold the complete result.
   readable and editable through Raw Markdown so the user can fix it, but it
   contributes no Tasks or Memos and cannot receive task commands.
   Duplicate IDs quarantine every file that claims the ID.
-- Diagnostics are exposed through the API and `fumori check`, which runs the
+- Diagnostics are exposed through the API and `calepin check`, which runs the
   same validation without starting the server.
 
 Invalid files are quarantined while the Vault keeps serving, instead of
@@ -225,7 +225,7 @@ the Web client's hand-written contracts and keeps Go and TypeScript in step
 ## First implementation slice
 
 1. `internal/format` with the Vault Format fixtures as golden tests.
-2. `fumori bootstrap` and `fumori check`.
+2. `calepin bootstrap` and `calepin check`.
 3. The single-object write path, startup recovery, and checkpoints.
 4. The index projection for notes, Daily Notes, Memos, and Tasks, then
    Chinese search.

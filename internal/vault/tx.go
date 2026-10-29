@@ -98,7 +98,7 @@ func (v *Vault) applyJournal(dir string, j journal) error {
 					return err
 				}
 			} else {
-				return fmt.Errorf("transaction %s cannot finish: %s changed outside Fumori", j.Label, op.From)
+				return fmt.Errorf("transaction %s cannot finish: %s changed outside Calepin", j.Label, op.From)
 			}
 		}
 		if op.From != op.To && v.currentRevision(op.From) == op.Base {

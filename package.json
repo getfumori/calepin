@@ -1,8 +1,8 @@
 {
-  "name": "fumori-web",
+  "name": "calepin-web",
   "version": "0.0.0",
   "private": true,
-  "description": "The Fumori Web client.",
+  "description": "The Calepin Web client.",
   "type": "module",
   "packageManager": "pnpm@11.13.1",
   "engines": {
@@ -14,9 +14,9 @@
     "build": "pnpm run clean && vite build",
     "typecheck": "vue-tsc -p tsconfig.web.json --noEmit && tsc -p tsconfig.tests.json",
     "test": "vitest run",
-    "build:binary": "pnpm run build && CGO_ENABLED=0 go build -trimpath -ldflags=-s -o bin/fumori ./cmd/fumori",
+    "build:binary": "pnpm run build && CGO_ENABLED=0 go build -trimpath -ldflags=-s -o bin/calepin ./cmd/calepin",
     "test:e2e": "pnpm run build:binary && playwright test",
-    "openapi": "FUMORI_WRITE_OPENAPI=1 vitest run test/web/openapi.test.ts"
+    "openapi": "CALEPIN_WRITE_OPENAPI=1 vitest run test/web/openapi.test.ts"
   },
   "dependencies": {
     "@tiptap/core": "3.29.0",

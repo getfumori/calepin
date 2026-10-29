@@ -90,7 +90,7 @@ func (v *Vault) forgetLocked(rel string) {
 // next startup re-indexes it by content hash, so the write still succeeds.
 func (v *Vault) indexError(err error) {
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "fumori: search index update failed: %v\n", err)
+		fmt.Fprintf(os.Stderr, "calepin: search index update failed: %v\n", err)
 	}
 }
 
@@ -243,7 +243,7 @@ func (v *Vault) CreateNote(typeKey, title string) (*Object, error) {
 	}
 	id := v.newUUID()
 	lines := append([]string{
-		"_id: " + id, "_schema: fumori.note", "_version: 1", fmt.Sprintf("_created: %q", v.now()),
+		"_id: " + id, "_schema: calepin.note", "_version: 1", fmt.Sprintf("_created: %q", v.now()),
 		"type: " + typeKey, "state: " + state, "tags: []", "aliases: []",
 	}, defaultProperties(v, typeKey)...)
 	body := ""
@@ -453,7 +453,7 @@ func (v *Vault) virtualDailyID(date string) string {
 
 func (v *Vault) newDailySource(date, free string) string {
 	lines := append([]string{
-		"_id: " + v.virtualDailyID(date), "_schema: fumori.daily-note", "_version: 1", fmt.Sprintf("_created: %q", v.now()),
+		"_id: " + v.virtualDailyID(date), "_schema: calepin.daily-note", "_version: 1", fmt.Sprintf("_created: %q", v.now()),
 		"type: daily-note", "state: " + orDefault(v.Model.Type("daily-note").DefaultState, v.Model.CreationState),
 		"tags: []", "aliases: []",
 	}, defaultProperties(v, "daily-note")...)

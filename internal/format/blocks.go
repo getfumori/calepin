@@ -50,9 +50,9 @@ type Diagnostic struct {
 func (d Diagnostic) String() string { return fmt.Sprintf("line %d: %s", d.Line, d.Message) }
 
 var (
-	markerPrefix = regexp.MustCompile(`^<!--\s*/?fumori:`)
-	startMarker  = regexp.MustCompile(`^<!-- fumori:([a-z]+) (\{.*\}) -->$`)
-	endMarker    = regexp.MustCompile(`^<!-- /fumori:([a-z]+) ([A-Za-z0-9_]+) -->$`)
+	markerPrefix = regexp.MustCompile(`^<!--\s*/?calepin:`)
+	startMarker  = regexp.MustCompile(`^<!-- calepin:([a-z]+) (\{.*\}) -->$`)
+	endMarker    = regexp.MustCompile(`^<!-- /calepin:([a-z]+) ([A-Za-z0-9_]+) -->$`)
 )
 
 // Blocks finds identified blocks. Markers count only at column zero outside
@@ -151,7 +151,7 @@ func encodeMeta(meta []KV) string {
 // encoder escapes '>' so a value can never close the comment early.
 func RenderBlock(kind BlockKind, meta []KV, content string) string {
 	id, _ := meta[0].Value.(string)
-	return fmt.Sprintf("<!-- fumori:%s %s -->\n%s\n<!-- /fumori:%s %s -->\n",
+	return fmt.Sprintf("<!-- calepin:%s %s -->\n%s\n<!-- /calepin:%s %s -->\n",
 		kind, encodeMeta(meta), strings.Trim(content, "\n"), kind, id)
 }
 

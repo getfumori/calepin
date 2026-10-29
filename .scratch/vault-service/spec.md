@@ -4,7 +4,7 @@ Status: resolved
 
 ## Goal
 
-Build the first working Go Vault Service: a single `fumori` binary that
+Build the first working Go Vault Service: a single `calepin` binary that
 bootstraps and serves one Git-backed Vault, edits notes and Daily Notes safely,
 accepts Quick capture and Memo comments, runs Page Tasks with recurrence
 through the HTTP API, searches mixed Chinese and English, and serves the
@@ -27,7 +27,7 @@ or raise the conflict instead of silently diverging.
 ## Repository layout
 
 - Go module `github.com/getfumori/fumori` at the repository root:
-  `go.mod`, `cmd/fumori/`, `internal/...` as listed in the service design.
+  `go.mod`, `cmd/calepin/`, `internal/...` as listed in the service design.
 - API schema in `api/openapi.yaml`.
 - The Web client stays in `src/web/`; its build is embedded into the binary.
 - Go `1.26`, `CGO_ENABLED=0` for every build and test.
@@ -35,8 +35,8 @@ or raise the conflict instead of silently diverging.
 ## In scope
 
 - Vault format v1 parsing, editing, and serialization.
-- `fumori bootstrap`, `fumori check`, `fumori serve`, `fumori reindex`,
-  `fumori checkpoint`.
+- `calepin bootstrap`, `calepin check`, `calepin serve`, `calepin reindex`,
+  `calepin checkpoint`.
 - Human Notes, Daily Notes, Memos, Memo comments, Page Tasks with
   Recurrence, one-off Inline Tasks, Task Lists, Unlisted Tasks, Inbox.
 - Single-object writes, write intents, idempotency, crash recovery, Git

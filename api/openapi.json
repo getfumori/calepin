@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Fumori Vault Service",
+    "title": "Calepin Vault Service",
     "version": "1",
     "description": "Generated from src/web/contracts/api.ts by `pnpm run openapi`. Do not edit by hand. The service has no authentication of its own; it listens on loopback or behind an operator-controlled authenticating gateway, so no security scheme is declared."
   },

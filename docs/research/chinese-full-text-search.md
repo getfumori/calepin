@@ -1,6 +1,6 @@
 # Chinese full-text search for the Go Vault Service
 
-Fumori needs dependable lexical retrieval from Chinese Markdown mixed with technical English, while keeping its index disposable and its server easy to distribute. The evidence favors SQLite FTS5 through `modernc.org/sqlite`, with application-side Chinese segmentation, exact identifier tokens, and a separate bigram fallback. Plain `unicode61` and trigram alone fail the required retrieval behavior. This is a research recommendation, not an implemented backend or a replacement ADR.
+Calepin needs dependable lexical retrieval from Chinese Markdown mixed with technical English, while keeping its index disposable and its server easy to distribute. The evidence favors SQLite FTS5 through `modernc.org/sqlite`, with application-side Chinese segmentation, exact identifier tokens, and a separate bigram fallback. Plain `unicode61` and trigram alone fail the required retrieval behavior. This is a research recommendation, not an implemented backend or a replacement ADR.
 
 ## Inspection snapshot
 

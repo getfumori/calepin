@@ -1,7 +1,7 @@
-# Fumori
+# Calepin
 
-Fumori is a private, self-hosted knowledge system: a forest grown from your
-words.
+Calepin is a private, self-hosted knowledge system: a pocket notebook for
+notes, quick capture, and tasks.
 
 It keeps notes, daily quick capture, tasks with recurring routines, and
 captured Web content as plain Markdown in a Git repository on your own server.
@@ -14,17 +14,17 @@ Requires Go 1.26, Node.js 26 with pnpm, and the system Git CLI.
 
 ```sh
 corepack pnpm install
-corepack pnpm run build:binary          # builds the Web client into bin/fumori
+corepack pnpm run build:binary          # builds the Web client into bin/calepin
 
-git init ~/fumori-vault
-bin/fumori bootstrap --vault ~/fumori-vault --timezone America/Los_Angeles
-bin/fumori serve --vault ~/fumori-vault  # http://127.0.0.1:3000
+git init ~/calepin-vault
+bin/calepin bootstrap --vault ~/calepin-vault --timezone America/Los_Angeles
+bin/calepin serve --vault ~/calepin-vault  # http://127.0.0.1:3000
 ```
 
-`fumori check --vault <path>` validates a Vault without serving it, and
-`fumori reindex --vault <path>` rebuilds the Search index while the server is
+`calepin check --vault <path>` validates a Vault without serving it, and
+`calepin reindex --vault <path>` rebuilds the Search index while the server is
 stopped. Runtime state, including the Search index, lives outside the Vault in
-`$XDG_STATE_HOME/fumori/<vault-id>/` unless `--state` is given.
+`$XDG_STATE_HOME/calepin/<vault-id>/` unless `--state` is given.
 
 The server binds to `127.0.0.1` and has no authentication or TLS of its own.
 Expose it only on a trusted network or behind an authenticating gateway.
@@ -46,7 +46,7 @@ Expose it only on a trusted network or behind an authenticating gateway.
 
 ## Repository layout
 
-- `cmd/fumori/` and `internal/`: the Go Vault Service.
+- `cmd/calepin/` and `internal/`: the Go Vault Service.
 - `src/web/`: the TypeScript and Vue 3 Web client. Its build is embedded into
   the binary from `internal/webassets/dist/`.
 - `e2e/`: browser journeys and API contract checks against the built binary.
@@ -66,7 +66,7 @@ The HTTP API is described by `api/openapi.json`. It is generated from
 `src/web/contracts/` with `corepack pnpm run openapi`, and `pnpm test` fails
 when it is stale.
 
-For Web development, run `bin/fumori serve` on port 3000 and
+For Web development, run `bin/calepin serve` on port 3000 and
 `corepack pnpm dev`; Vite proxies `/api` to the Go server.
 
 ## License

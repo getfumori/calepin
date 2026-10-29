@@ -44,9 +44,9 @@ duplicates. Moving content keeps IDs; copying generates new ones.
 Identified blocks are delimited by paired HTML comments:
 
 ```
-<!-- fumori:memo {"id":"m_...","created":"2026-10-27T09:42:00-07:00"} -->
+<!-- calepin:memo {"id":"m_...","created":"2026-10-27T09:42:00-07:00"} -->
 ...ordinary Markdown...
-<!-- /fumori:memo m_... -->
+<!-- /calepin:memo m_... -->
 ```
 
 - A marker is recognized only as a top-level HTML block of the document. A
@@ -82,7 +82,7 @@ an ordinary public property, not reserved envelope data.
 An Inline Task is a list item whose first line ends with a task marker:
 
 ```
-- [ ] Buy network cable <!-- fumori:task {"id":"t_...","list":"[[Homelab]]"} -->
+- [ ] Buy network cable <!-- calepin:task {"id":"t_...","list":"[[Homelab]]"} -->
 ```
 
 The checkbox is the completion state. `completed` must agree with it; a
@@ -112,7 +112,7 @@ for monthly rules, which defaults to the day of the first Occurrence.
 Placement is non-semantic. Human Notes, Task Lists, and Page Tasks live in
 `human/notes/`; Daily Notes in `human/daily/YYYY/`; Sources in
 `sources/records/`; AI Knowledge in `knowledge/`; attachments in `assets/`.
-The Vault Manifest and Organization Model live under `.fumori/`. There are no
+The Vault Manifest and Organization Model live under `.calepin/`. There are no
 per-kind folders such as `lists/` or `bookmarks/`.
 
 ### F11. Values
@@ -131,7 +131,7 @@ frontmatter nodes.
 ```markdown
 ---
 _id: 7d0c8a52-3f1e-4b8e-9a51-0f5d2c1b6e01
-_schema: fumori.note
+_schema: calepin.note
 _version: 1
 _created: "2026-10-01T09:00:00-07:00"
 type: task-list
@@ -150,7 +150,7 @@ Maintenance, backup, and hardware upgrades.
 ```markdown
 ---
 _id: 2b6f1d7e-9c44-4f0a-8e2d-6a1b3c5d7e90
-_schema: fumori.note
+_schema: calepin.note
 _version: 1
 _created: "2026-10-20T21:10:00-07:00"
 type: project
@@ -180,7 +180,7 @@ The three checkboxes are a local checklist and are not global Tasks.
 ```markdown
 ---
 _id: 9a3e5c71-0b2d-4e6f-8a19-c4d2e7f6a3b8
-_schema: fumori.note
+_schema: calepin.note
 _version: 1
 _created: "2026-10-01T09:00:00-07:00"
 type: procedure
@@ -212,11 +212,11 @@ task:
 
 ## History
 
-<!-- fumori:occurrence {"id":"o_01J9P7M3D5XC","original":"2026-11-01","scheduled":"2026-11-01","outcome":"completed","at":"2026-11-02T09:30:00-08:00"} -->
+<!-- calepin:occurrence {"id":"o_01J9P7M3D5XC","original":"2026-11-01","scheduled":"2026-11-01","outcome":"completed","at":"2026-11-02T09:30:00-08:00"} -->
 ### 2026-11-02
 
 No time on Sunday; did it Monday. Backups fine, pruned old images.
-<!-- /fumori:occurrence o_01J9P7M3D5XC -->
+<!-- /calepin:occurrence o_01J9P7M3D5XC -->
 ```
 
 The Monday completion kept the Sunday Occurrence identity, and the next
@@ -227,7 +227,7 @@ Occurrence stays on the Sunday schedule.
 ```markdown
 ---
 _id: 4c1a9e2f-7b3d-4a6e-9f08-2d5c6b7a8e91
-_schema: fumori.daily-note
+_schema: calepin.daily-note
 _version: 1
 _created: "2026-10-27T08:15:00-07:00"
 type: daily-note
@@ -241,19 +241,19 @@ date: "2026-10-27"
 
 Slept badly. Plan: finish the backup script.
 
-<!-- fumori:memo {"id":"m_01J9K3F8Q2VA","created":"2026-10-27T09:42:00-07:00"} -->
+<!-- calepin:memo {"id":"m_01J9K3F8Q2VA","created":"2026-10-27T09:42:00-07:00"} -->
 Try an old phone as the robot camera.
 
-- [ ] Measure camera latency <!-- fumori:task {"id":"t_01J9K3G1N7HS"} -->
-<!-- /fumori:memo m_01J9K3F8Q2VA -->
+- [ ] Measure camera latency <!-- calepin:task {"id":"t_01J9K3G1N7HS"} -->
+<!-- /calepin:memo m_01J9K3F8Q2VA -->
 
-<!-- fumori:memo {"id":"m_01J9K5T2R8BD","created":"2026-10-27T15:30:00-07:00"} -->
+<!-- calepin:memo {"id":"m_01J9K5T2R8BD","created":"2026-10-27T15:30:00-07:00"} -->
 Good write-up on phone vision for robots: [[Old phones as robot vision]]
-<!-- /fumori:memo m_01J9K5T2R8BD -->
+<!-- /calepin:memo m_01J9K5T2R8BD -->
 
-<!-- fumori:comment {"id":"c_01J9N1Z4H6PE","parent":"m_01J9K3F8Q2VA","created":"2026-10-29T10:15:00-07:00"} -->
+<!-- calepin:comment {"id":"c_01J9N1Z4H6PE","parent":"m_01J9K3F8Q2VA","created":"2026-10-29T10:15:00-07:00"} -->
 USB power is enough; no battery needed.
-<!-- /fumori:comment c_01J9N1Z4H6PE -->
+<!-- /calepin:comment c_01J9N1Z4H6PE -->
 ```
 
 The second Memo links to a Source created by client-side URL Capture.

@@ -120,13 +120,13 @@ func TestRejectedFrontmatterAndBodyDiagnostics(t *testing.T) {
 		}
 	}
 	bodies := map[string]string{
-		"unterminated": "<!-- fumori:memo {\"id\":\"m_1\"} -->\ntext\n",
-		"mismatch":     "<!-- fumori:memo {\"id\":\"m_1\"} -->\n<!-- /fumori:memo m_2 -->\n",
-		"nested":       "<!-- fumori:memo {\"id\":\"m_1\"} -->\n<!-- fumori:memo {\"id\":\"m_2\"} -->\n",
-		"bad json":     "<!-- fumori:memo {id} -->\n",
-		"unknown kind": "<!-- fumori:poll {\"id\":\"p_1\"} -->\n",
-		"duplicate":    "<!-- fumori:memo {\"id\":\"m_1\"} -->\na\n<!-- /fumori:memo m_1 -->\n<!-- fumori:memo {\"id\":\"m_1\"} -->\nb\n<!-- /fumori:memo m_1 -->\n",
-		"stray end":    "<!-- /fumori:memo m_1 -->\n",
+		"unterminated": "<!-- calepin:memo {\"id\":\"m_1\"} -->\ntext\n",
+		"mismatch":     "<!-- calepin:memo {\"id\":\"m_1\"} -->\n<!-- /calepin:memo m_2 -->\n",
+		"nested":       "<!-- calepin:memo {\"id\":\"m_1\"} -->\n<!-- calepin:memo {\"id\":\"m_2\"} -->\n",
+		"bad json":     "<!-- calepin:memo {id} -->\n",
+		"unknown kind": "<!-- calepin:poll {\"id\":\"p_1\"} -->\n",
+		"duplicate":    "<!-- calepin:memo {\"id\":\"m_1\"} -->\na\n<!-- /calepin:memo m_1 -->\n<!-- calepin:memo {\"id\":\"m_1\"} -->\nb\n<!-- /calepin:memo m_1 -->\n",
+		"stray end":    "<!-- /calepin:memo m_1 -->\n",
 	}
 	for name, body := range bodies {
 		if _, diags := Blocks(body); len(diags) == 0 {
@@ -136,7 +136,7 @@ func TestRejectedFrontmatterAndBodyDiagnostics(t *testing.T) {
 }
 
 func TestMarkersInsideCodeAreText(t *testing.T) {
-	body := "```\n<!-- fumori:memo {\"id\":\"m_1\"} -->\n- [ ] x <!-- fumori:task {\"id\":\"t_1\"} -->\n```\n"
+	body := "```\n<!-- calepin:memo {\"id\":\"m_1\"} -->\n- [ ] x <!-- calepin:task {\"id\":\"t_1\"} -->\n```\n"
 	blocks, diags := Blocks(body)
 	tasks, taskDiags := InlineTasks(body)
 	if len(blocks)+len(diags)+len(tasks)+len(taskDiags) != 0 {

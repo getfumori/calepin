@@ -1,4 +1,4 @@
-// Command fumori bootstraps, checks, and serves a Vault.
+// Command calepin bootstraps, checks, and serves a Vault.
 package main
 
 import (
@@ -21,10 +21,10 @@ import (
 )
 
 const usage = `Usage:
-  fumori bootstrap --vault <path> [--name <name>] [--timezone <IANA zone>]
-  fumori check     --vault <path>
-  fumori serve     --vault <path> [--state <dir>] [--host 127.0.0.1] [--port 3000]
-  fumori reindex   --vault <path> [--state <dir>]
+  calepin bootstrap --vault <path> [--name <name>] [--timezone <IANA zone>]
+  calepin check     --vault <path>
+  calepin serve     --vault <path> [--state <dir>] [--host 127.0.0.1] [--port 3000]
+  calepin reindex   --vault <path> [--state <dir>]
 `
 
 func main() {
@@ -41,7 +41,7 @@ func main() {
 		os.Exit(2)
 	}
 	if err := run(os.Args[2:]); err != nil {
-		fmt.Fprintln(os.Stderr, "fumori:", err)
+		fmt.Fprintln(os.Stderr, "calepin:", err)
 		os.Exit(1)
 	}
 }
@@ -76,7 +76,7 @@ func systemZone() string {
 func bootstrap(args []string) error {
 	fs := flag.NewFlagSet("bootstrap", flag.ExitOnError)
 	path := vaultFlag(fs)
-	name := fs.String("name", "Fumori", "Vault display name")
+	name := fs.String("name", "Calepin", "Vault display name")
 	zone := fs.String("timezone", systemZone(), "owner IANA time zone")
 	fs.Parse(args)
 	root, err := absVault(*path)
@@ -144,7 +144,7 @@ func reindex(args []string) error {
 func serve(args []string) error {
 	fs := flag.NewFlagSet("serve", flag.ExitOnError)
 	path := vaultFlag(fs)
-	state := fs.String("state", "", "runtime state directory (default $XDG_STATE_HOME/fumori/<vault-id>)")
+	state := fs.String("state", "", "runtime state directory (default $XDG_STATE_HOME/calepin/<vault-id>)")
 	host := fs.String("host", "127.0.0.1", "listen host")
 	port := fs.Int("port", 3000, "listen port")
 	interval := fs.Duration("checkpoint-interval", 30*time.Minute, "Git checkpoint interval")
@@ -186,7 +186,7 @@ func serve(args []string) error {
 		defer cancel()
 		srv.Shutdown(shutdown)
 	}()
-	fmt.Printf("Fumori is serving %s at http://%s\n", v.Manifest.Name, listener.Addr())
+	fmt.Printf("Calepin is serving %s at http://%s\n", v.Manifest.Name, listener.Addr())
 	if err := srv.Serve(listener); !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}

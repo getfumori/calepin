@@ -82,7 +82,7 @@ func TestChineseSearch(t *testing.T) {
 		got := map[string]bool{}
 		for _, r := range results {
 			got[r.Object.Title] = true
-			if r.Snippet == "" || strings.Contains(r.Snippet, "fumori:") {
+			if r.Snippet == "" || strings.Contains(r.Snippet, "calepin:") {
 				t.Errorf("%s: bad snippet %q", query, r.Snippet)
 			}
 		}

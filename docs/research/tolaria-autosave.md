@@ -75,18 +75,18 @@ Verified configuration and behavior:
 - Each activity burst can trigger at most once until new activity is recorded; failed checkpoint attempts are also marked handled for that burst ([`src/hooks/useAutoGit.ts` lines 104-131](https://github.com/refactoringhq/tolaria/blob/a904e2f96ae634c05155abdf05a89456a8f54f52/src/hooks/useAutoGit.ts#L104-L131); tests at [`src/hooks/useAutoGit.test.ts` lines 36-51 and 106-119](https://github.com/refactoringhq/tolaria/blob/a904e2f96ae634c05155abdf05a89456a8f54f52/src/hooks/useAutoGit.test.ts#L36-L51)).
 - The shared automatic checkpoint path prevents overlapping checkpoints, uses deterministic `Updated N note(s)` / `Updated N file(s)` messages by default, commits locally when no remote exists, and uses the remote-aware commit/push path when a remote exists ([`docs/adr/0067-autogit-idle-and-inactive-checkpoints.md` lines 20-38](https://github.com/refactoringhq/tolaria/blob/a904e2f96ae634c05155abdf05a89456a8f54f52/docs/adr/0067-autogit-idle-and-inactive-checkpoints.md#L20-L38); [`src/hooks/useCommitFlow.ts` lines 512-564](https://github.com/refactoringhq/tolaria/blob/a904e2f96ae634c05155abdf05a89456a8f54f52/src/hooks/useCommitFlow.ts#L512-L564)).
 
-## Implications for Fumori (inference)
+## Implications for Calepin (inference)
 
 Tolaria's numbers should be treated as evidence, not copied as a single `1.5s`
 setting: its effective rich-editor and raw-editor disk latencies include two
-debounce stages. Fumori should measure the complete interval from a dirty rich
+debounce stages. Calepin should measure the complete interval from a dirty rich
 editor buffer to a durable server save and keep the meaning of its configured
 debounce explicit.
 
 Tolaria is a single-user desktop app and does not provide a base-revision save
-guard or atomic replacement. Those omissions are not evidence that Fumori's
+guard or atomic replacement. Those omissions are not evidence that Calepin's
 server-authoritative, multi-tab Web architecture should omit optimistic
-revision checks or atomic filesystem writes. Fumori additionally needs an
+revision checks or atomic filesystem writes. Calepin additionally needs an
 explicit browser-close/crash boundary because Tolaria's inspected save path has
 no blur, visibility, or unload flush and cancels its persistence timer on full
 hook unmount.

@@ -25,7 +25,7 @@ function navigate(event: MouseEvent, destination: string): void {
         </svg>
       </span>
       <span>
-        <strong>Fumori</strong>
+        <strong>Calepin</strong>
         <small>{{ vaultName ?? "Opening Vault" }}</small>
       </span>
     </div>

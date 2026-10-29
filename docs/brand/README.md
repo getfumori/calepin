@@ -1,6 +1,7 @@
 # Brand Assets
 
-This directory currently contains one transferred concept image:
+This directory currently contains one transferred concept image, made for the
+earlier working name Fumori:
 
 - `fumori-logo-concept-v2.png`
 - PNG, 1774 × 887, RGB
@@ -9,10 +10,10 @@ This directory currently contains one transferred concept image:
 
 ## Concept-only status
 
-The image is a generated raster concept used to preserve the accepted visual
-direction. It is not the canonical logo, a production asset, or approved
-shippable artwork. Do not trace it mechanically or use it directly in the
-product.
+The image is a generated raster concept that shows the old Fumori wordmark. It
+is kept only to preserve the color and typography direction. It is not a
+Calepin logo, a production asset, or approved shippable artwork.
+Do not trace it mechanically or use it directly in the product.
 
 Production logo work must create an original vector system and validate its
 geometry, typography, licensing, accessibility, small-size behavior, and light

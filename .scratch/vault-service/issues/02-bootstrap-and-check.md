@@ -6,21 +6,21 @@ Blocked by: 01
 
 ## What
 
-The `fumori` CLI skeleton with `bootstrap` and `check`, plus the Vault
+The `calepin` CLI skeleton with `bootstrap` and `check`, plus the Vault
 Manifest and Core Model files.
 
 ## Scope
 
-- `cmd/fumori` with subcommand dispatch and `--help`.
-- Define in `vault-format.md` the format of `.fumori/vault.md` (identity,
+- `cmd/calepin` with subcommand dispatch and `--help`.
+- Define in `vault-format.md` the format of `.calepin/vault.md` (identity,
   name, format version, owner IANA time zone) and the Core Model files
-  under `.fumori/model/`: lifecycle, core properties, Types `note`,
+  under `.calepin/model/`: lifecycle, core properties, Types `note`,
   `daily-note`, `task-list`, and the Inbox Saved view.
-- `fumori bootstrap --vault <path> [--name] [--timezone]`: requires an empty
+- `calepin bootstrap --vault <path> [--name] [--timezone]`: requires an empty
   Git repository, writes the Manifest and Core Model, creates the reserved
   folders from F10, and makes the first commit. Defaults the time zone to
   the system zone.
-- `fumori check --vault <path>`: full validation without starting a server.
+- `calepin check --vault <path>`: full validation without starting a server.
   Vault-level errors exit non-zero; object-level problems are listed as
   quarantine diagnostics.
 - `internal/gitrepo`: Git through the system CLI without a shell, with hooks,
@@ -38,4 +38,4 @@ Manifest and Core Model files.
 
 ## Comments
 
-Done. `.fumori/vault.md` and `.fumori/model/` are written by `internal/model/core.go`; their format lives in that file rather than in vault-format.md. The hook test goes red when the `core.hooksPath` guard is removed.
+Done. `.calepin/vault.md` and `.calepin/model/` are written by `internal/model/core.go`; their format lives in that file rather than in vault-format.md. The hook test goes red when the `core.hooksPath` guard is removed.

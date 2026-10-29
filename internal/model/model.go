@@ -1,5 +1,5 @@
 // Package model loads the Vault Manifest and the Organization Model from
-// .fumori/ and defines the Core Model written by bootstrap.
+// .calepin/ and defines the Core Model written by bootstrap.
 package model
 
 import (
@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	Dir          = ".fumori"
-	ManifestPath = ".fumori/vault.md"
-	modelDir     = ".fumori/model"
+	Dir          = ".calepin"
+	ManifestPath = ".calepin/vault.md"
+	modelDir     = ".calepin/model"
 )
 
 // Manifest is the Vault's identity and portable configuration.
@@ -142,9 +142,9 @@ func decode(doc *format.Document, rel string, fields map[string]any) error {
 	return nil
 }
 
-// LoadManifest reads .fumori/vault.md.
+// LoadManifest reads .calepin/vault.md.
 func LoadManifest(root string) (*Manifest, error) {
-	doc, err := readDoc(root, ManifestPath, "fumori.vault")
+	doc, err := readDoc(root, ManifestPath, "calepin.vault")
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func LoadManifest(root string) (*Manifest, error) {
 // Load reads and validates the Organization Model.
 func Load(root string) (*Model, error) {
 	lifecyclePath := modelDir + "/lifecycle.md"
-	lifecycle, err := readDoc(root, lifecyclePath, "fumori.model.lifecycle")
+	lifecycle, err := readDoc(root, lifecyclePath, "calepin.model.lifecycle")
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +178,7 @@ func Load(root string) (*Model, error) {
 		return nil, fmt.Errorf("%s: states must include creation_state and archived_state", lifecyclePath)
 	}
 
-	err = eachModelFile(root, "types", "fumori.model.type", func(rel, key string, doc *format.Document) error {
+	err = eachModelFile(root, "types", "calepin.model.type", func(rel, key string, doc *format.Document) error {
 		t := Type{Key: key, Properties: []Property{}}
 		if err := decode(doc, rel, map[string]any{"name": &t.Name, "default_state": &t.DefaultState, "properties": &t.Properties}); err != nil {
 			return err
@@ -197,7 +197,7 @@ func Load(root string) (*Model, error) {
 			return nil, fmt.Errorf("%s/types/%s.md is required", modelDir, required)
 		}
 	}
-	err = eachModelFile(root, "relationships", "fumori.model.relationship", func(rel, key string, doc *format.Document) error {
+	err = eachModelFile(root, "relationships", "calepin.model.relationship", func(rel, key string, doc *format.Document) error {
 		r := Relationship{Key: key, TargetTypes: []string{}}
 		if err := decode(doc, rel, map[string]any{"name": &r.Name, "cardinality": &r.Cardinality, "inverse": &r.Inverse, "target_types": &r.TargetTypes}); err != nil {
 			return err
@@ -211,7 +211,7 @@ func Load(root string) (*Model, error) {
 	if err != nil {
 		return nil, err
 	}
-	err = eachModelFile(root, "views", "fumori.model.view", func(rel, key string, doc *format.Document) error {
+	err = eachModelFile(root, "views", "calepin.model.view", func(rel, key string, doc *format.Document) error {
 		v := View{Key: key}
 		if err := decode(doc, rel, map[string]any{"name": &v.Name, "query": &v.Query}); err != nil {
 			return err

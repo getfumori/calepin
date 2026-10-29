@@ -6,7 +6,7 @@ Blocked by: 02
 
 ## What
 
-`internal/vault`, `internal/state`, and `fumori serve` with the
+`internal/vault`, `internal/state`, and `calepin serve` with the
 single-object write path, startup recovery, and Git checkpoints, exposed
 through minimal note and Daily Note endpoints.
 
@@ -19,7 +19,7 @@ through minimal note and Daily Note endpoints.
 - Startup sequence: verify repository, clear a stale `index.lock` safely,
   finish write intents, recovery checkpoint when dirty.
 - Checkpoint loop (30-minute default, clean is a no-op), checkpoint on clean
-  shutdown, `fumori checkpoint` and `POST /api/v1/checkpoint`.
+  shutdown, `calepin checkpoint` and `POST /api/v1/checkpoint`.
 - Rename of a Human Note with wikilink rewriting as a roll-forward
   transaction (journal, staging, recovery).
 - Endpoints: `GET/PUT /notes/{id}`, `POST /notes`, `GET/PUT /daily/{date}`
@@ -44,4 +44,4 @@ through minimal note and Daily Note endpoints.
 
 ## Comments
 
-Done in `internal/vault`. Simplifications are listed under Implementation notes in vault-service.md. There is no `fumori checkpoint` CLI command; `POST /api/v1/checkpoint` covers manual checkpoints. Crash tests go red under mutation.
+Done in `internal/vault`. Simplifications are listed under Implementation notes in vault-service.md. There is no `calepin checkpoint` CLI command; `POST /api/v1/checkpoint` covers manual checkpoints. Crash tests go red under mutation.

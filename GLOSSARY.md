@@ -1,4 +1,4 @@
-# Fumori
+# Calepin
 
 A private, self-hosted knowledge system for one person: notes, daily capture,
 tasks, and captured Web content, with optional AI that may read but never

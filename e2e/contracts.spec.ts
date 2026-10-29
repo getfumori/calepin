@@ -31,10 +31,10 @@ import {
   taskCommandResponseSchema
 } from "../src/web/contracts/api";
 
-const fumori = join(process.cwd(), "bin", "fumori");
+const calepin = join(process.cwd(), "bin", "calepin");
 
 const flagView = `---
-_schema: fumori.model.view
+_schema: calepin.model.view
 _version: 1
 key: flagged
 name: Flagged
@@ -51,13 +51,13 @@ query:
 test("every Go API response satisfies the Web client contracts", async ({
   request
 }) => {
-  const root = mkdtempSync(join(tmpdir(), "fumori-contract-"));
+  const root = mkdtempSync(join(tmpdir(), "calepin-contract-"));
   const vault = join(root, "vault");
   execFileSync("git", ["init", "-q", vault]);
-  execFileSync(fumori, ["bootstrap", "--vault", vault, "--timezone", "UTC"]);
-  writeFileSync(join(vault, ".fumori/model/views/flagged.md"), flagView);
+  execFileSync(calepin, ["bootstrap", "--vault", vault, "--timezone", "UTC"]);
+  writeFileSync(join(vault, ".calepin/model/views/flagged.md"), flagView);
   const child = spawn(
-    fumori,
+    calepin,
     ["serve", "--vault", vault, "--state", join(root, "state"), "--port", "0"],
     { stdio: ["ignore", "pipe", "inherit"] }
   );

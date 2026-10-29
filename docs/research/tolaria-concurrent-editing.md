@@ -91,8 +91,8 @@ The inspected tests verify:
 
 No test was found that runs two live App renderers editing and saving the same note concurrently. The silent-overwrite conclusion is therefore a source-level consequence of the verified API and refresh contracts, not the result of an upstream two-window end-to-end test.
 
-## Implications for Fumori (recommendation)
+## Implications for Calepin (recommendation)
 
-Fumori is a server-authoritative Web application, so multiple browser tabs and sessions are a normal operating condition rather than an auxiliary desktop-window edge case. Every note write should carry the base object revision (or an equivalent expected-content token), and the server should reject a stale write instead of overwriting newer canonical content. A rejected write should leave the browser draft intact and expose a resolvable conflict state.
+Calepin is a server-authoritative Web application, so multiple browser tabs and sessions are a normal operating condition rather than an auxiliary desktop-window edge case. Every note write should carry the base object revision (or an equivalent expected-content token), and the server should reject a stale write instead of overwriting newer canonical content. A rejected write should leave the browser draft intact and expose a resolvable conflict state.
 
 Per-object server-side write serialization and atomic file replacement should protect filesystem integrity, while revision comparison protects user intent. Live update delivery can improve convergence for clean clients, but filesystem watching, WebSocket notifications, or BroadcastChannel messages are not substitutes for a conditional write precondition.

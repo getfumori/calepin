@@ -12,7 +12,7 @@ and lexical search, following ADR-0005 and the research report.
 ## Scope
 
 - `modernc.org/sqlite` FTS5, generation files, fingerprint, atomic
-  activation of rebuilds, `fumori reindex`.
+  activation of rebuilds, `calepin reindex`.
 - Structured projection: objects, links and backlinks, Tasks, current
   Occurrences, Occurrence records, Task List references, Memos, comments,
   quarantine state.

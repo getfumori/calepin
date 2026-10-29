@@ -5,7 +5,7 @@ import { join } from "node:path";
 
 import { expect, test } from "@playwright/test";
 
-const fumori = join(process.cwd(), "bin", "fumori");
+const calepin = join(process.cwd(), "bin", "calepin");
 
 function plusDays(date: string, days: number): string {
   const d = new Date(`${date}T12:00:00Z`);
@@ -14,12 +14,12 @@ function plusDays(date: string, days: number): string {
 }
 
 test("run a routine and triage a captured task", async ({ page, request }) => {
-  const root = mkdtempSync(join(tmpdir(), "fumori-tasks-"));
+  const root = mkdtempSync(join(tmpdir(), "calepin-tasks-"));
   const vault = join(root, "vault");
   execFileSync("git", ["init", "-q", vault]);
-  execFileSync(fumori, ["bootstrap", "--vault", vault, "--timezone", "UTC"]);
+  execFileSync(calepin, ["bootstrap", "--vault", vault, "--timezone", "UTC"]);
   const child: ChildProcess = spawn(
-    fumori,
+    calepin,
     ["serve", "--vault", vault, "--state", join(root, "state"), "--port", "0"],
     { stdio: ["ignore", "pipe", "inherit"] }
   );
@@ -84,12 +84,12 @@ test("run a routine and triage a captured task", async ({ page, request }) => {
     const notes = join(vault, "human", "notes");
     const routineFile = readdirSync(notes).find((f) => f.startsWith("服务器例行检查"))!;
     const routineSource = readFileSync(join(notes, routineFile), "utf8");
-    expect(routineSource).toMatch(/## History\n\n<!-- fumori:occurrence \{"id":"o_/);
+    expect(routineSource).toMatch(/## History\n\n<!-- calepin:occurrence \{"id":"o_/);
     expect(routineSource).toContain("备份正常，清理了旧镜像。");
     const dailyDir = join(vault, "human", "daily");
     const daily = readdirSync(dailyDir, { recursive: true }).map(String).find((f) => f.endsWith(".md"))!;
     expect(readFileSync(join(dailyDir, daily), "utf8")).toMatch(
-      /- \[x\] 买网线 <!-- fumori:task \{"id":"t_[0-9A-Z]{12}","list":"\[\[家庭服务器\]\]","due":"\d{4}-\d{2}-\d{2}","completed":/
+      /- \[x\] 买网线 <!-- calepin:task \{"id":"t_[0-9A-Z]{12}","list":"\[\[家庭服务器\]\]","due":"\d{4}-\d{2}-\d{2}","completed":/
     );
   } finally {
     child.kill("SIGTERM");

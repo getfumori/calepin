@@ -19,7 +19,7 @@ the binary.
   command and checked in CI for drift.
 - Replace `src/web/contracts/` with the generated types; adapt the Web client
   to the Go endpoints without adding new UI.
-- `internal/webassets`: embed the Vite build; `fumori serve` serves it with
+- `internal/webassets`: embed the Vite build; `calepin serve` serves it with
   no-store for knowledge responses and the Ephemeral knowledge client rules.
 - CI: Go tests with `CGO_ENABLED=0` on Linux and macOS, Web typecheck,
   tests, and build, then a binary smoke test.

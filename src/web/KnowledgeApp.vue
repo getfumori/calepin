@@ -217,7 +217,7 @@ const {
         : richEditorSafe.value
           ? "rich"
           : "protected";
-    document.title = `${current.title} — Fumori`;
+    document.title = `${current.title} — Calepin`;
     void refreshAfterSave(current.id);
   },
   setSaveError: (message) => {
@@ -324,7 +324,7 @@ function configureAutosave(currentNote: HumanNoteResponse): void {
       humanNote.value = saved;
       rawDraft.value = saved.sourceMarkdown;
       richEditorSafe.value = isRichMarkdownRoundTripSafe(saved.bodyMarkdown);
-      document.title = `${saved.title} — Fumori`;
+      document.title = `${saved.title} — Calepin`;
       saveStatus.value = "saved";
       void refreshAfterSave(saved.id);
     },
@@ -419,13 +419,13 @@ async function load(): Promise<void> {
         humanNote.value.bodyMarkdown
       );
       editorMode.value = richEditorSafe.value ? "rich" : "protected";
-      document.title = `${humanNote.value.title} — Fumori`;
+      document.title = `${humanNote.value.title} — Calepin`;
       configureAutosave(humanNote.value);
       return;
     }
 
     if (mode === "types" || mode === "views") {
-      document.title = `${sectionTitle.value} — Fumori`;
+      document.title = `${sectionTitle.value} — Calepin`;
       return;
     }
 
@@ -437,7 +437,7 @@ async function load(): Promise<void> {
         throw new Error(`Type request failed (${response.status})`);
       }
       typeResult.value = typeResultResponseSchema.parse(await response.json());
-      document.title = `${typeResult.value.name} — Fumori`;
+      document.title = `${typeResult.value.name} — Calepin`;
       return;
     }
 
@@ -451,12 +451,12 @@ async function load(): Promise<void> {
       viewResult.value = savedViewResultResponseSchema.parse(
         await response.json()
       );
-      document.title = `${viewResult.value.name} — Fumori`;
+      document.title = `${viewResult.value.name} — Calepin`;
       return;
     }
 
     if (mode === "search") {
-      document.title = "Search — Fumori";
+      document.title = "Search — Calepin";
       const listResponse = await fetch("/api/v1/types/task-list", { cache: "no-store" });
       if (listResponse.ok) {
         taskLists.value = typeResultResponseSchema
@@ -481,7 +481,7 @@ async function load(): Promise<void> {
       throw new Error(`${sectionTitle.value} request failed (${response.status})`);
     }
     noteList.value = humanNoteListResponseSchema.parse(await response.json());
-    document.title = `${sectionTitle.value} — Fumori`;
+    document.title = `${sectionTitle.value} — Calepin`;
   } catch (reason) {
     fatalError.value = explainError(reason, "This part of the Vault could not be opened.");
   }
@@ -1127,7 +1127,7 @@ onBeforeUnmount(() => {
               }}
             </p>
             <p>
-              The note's canonical file will be removed. Fumori will not
+              The note's canonical file will be removed. Calepin will not
               rewrite references or keep a note trash.
             </p>
             <div class="dialog-actions">
@@ -1199,7 +1199,7 @@ onBeforeUnmount(() => {
         <p>
           {{ typeResult.properties.length }}
           ordered Type-defined properties. Definitions are operator-authored
-          while Fumori is stopped.
+          while Calepin is stopped.
         </p>
       </section>
 

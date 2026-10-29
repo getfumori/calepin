@@ -199,14 +199,14 @@ type InlineTask struct {
 	Start, End int
 }
 
-var inlineTaskLine = regexp.MustCompile(`^(\s*[-*+] \[)([ xX])(\] )(.*?)\s*<!-- fumori:task (\{.*\}) -->\s*$`)
+var inlineTaskLine = regexp.MustCompile(`^(\s*[-*+] \[)([ xX])(\] )(.*?)\s*<!-- calepin:task (\{.*\}) -->\s*$`)
 
 // InlineTasks returns marked checkboxes outside code.
 func InlineTasks(body string) ([]InlineTask, []Diagnostic) {
 	var tasks []InlineTask
 	var diags []Diagnostic
 	for i, l := range scanLines(body) {
-		if l.inFence || l.isFence || !strings.Contains(l.text, "<!-- fumori:task ") {
+		if l.inFence || l.isFence || !strings.Contains(l.text, "<!-- calepin:task ") {
 			continue
 		}
 		m := inlineTaskLine.FindStringSubmatch(l.text)
@@ -238,7 +238,7 @@ func RenderInlineTask(indent string, checked bool, text string, meta []KV) strin
 	if checked {
 		box = "x"
 	}
-	return fmt.Sprintf("%s- [%s] %s <!-- fumori:task %s -->", indent, box, text, encodeMeta(meta))
+	return fmt.Sprintf("%s- [%s] %s <!-- calepin:task %s -->", indent, box, text, encodeMeta(meta))
 }
 
 // ReplaceRange replaces body[start:end].

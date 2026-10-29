@@ -83,10 +83,10 @@ func decodeObject(rel, source string, m *model.Model) (*Object, []string) {
 	o := &Object{Path: rel, Source: source, Revision: revision(source), Doc: doc,
 		Properties: map[string]any{}, Relationships: map[string]any{}, Tags: []string{}, Aliases: []string{}}
 
-	wantSchema := "fumori.note"
+	wantSchema := "calepin.note"
 	o.Kind = KindNote
 	if match := dailyPath.FindStringSubmatch(rel); match != nil {
-		o.Kind, o.Date, wantSchema = KindDaily, match[2], "fumori.daily-note"
+		o.Kind, o.Date, wantSchema = KindDaily, match[2], "calepin.daily-note"
 		if !strings.HasPrefix(match[2], match[1]) {
 			fail("daily note is in the wrong year folder")
 		}

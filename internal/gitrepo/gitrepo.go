@@ -21,8 +21,8 @@ var safety = []string{
 	"-c", "core.fsmonitor=false",
 	"-c", "core.pager=cat",
 	"-c", "commit.gpgSign=false",
-	"-c", "user.name=Fumori",
-	"-c", "user.email=fumori@localhost",
+	"-c", "user.name=Calepin",
+	"-c", "user.email=calepin@localhost",
 }
 
 func (r Repo) Run(ctx context.Context, args ...string) (string, error) {

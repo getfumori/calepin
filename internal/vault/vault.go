@@ -95,7 +95,7 @@ func Open(ctx context.Context, opts Options) (*Vault, error) {
 			}
 			base = filepath.Join(home, ".local", "state")
 		}
-		opts.StateDir = filepath.Join(base, "fumori", manifest.ID)
+		opts.StateDir = filepath.Join(base, "calepin", manifest.ID)
 	}
 	if err := os.MkdirAll(opts.StateDir, 0o700); err != nil {
 		return nil, err
@@ -153,7 +153,7 @@ func (v *Vault) acquireLock() error {
 	}
 	if err := syscall.Flock(int(f.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
 		f.Close()
-		return errors.New("another Fumori process is serving this Vault")
+		return errors.New("another Calepin process is serving this Vault")
 	}
 	v.lock = f
 	return nil
@@ -183,7 +183,7 @@ func (v *Vault) removeTempFiles() error {
 		if err != nil {
 			return err
 		}
-		if !d.IsDir() && strings.HasPrefix(d.Name(), ".fumori-tmp-") {
+		if !d.IsDir() && strings.HasPrefix(d.Name(), ".calepin-tmp-") {
 			return os.Remove(p)
 		}
 		return nil
@@ -355,7 +355,7 @@ func (v *Vault) publish(rel, source string) error {
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return err
 	}
-	tmp, err := os.CreateTemp(dir, ".fumori-tmp-*")
+	tmp, err := os.CreateTemp(dir, ".calepin-tmp-*")
 	if err != nil {
 		return err
 	}

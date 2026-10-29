@@ -204,11 +204,11 @@ func TestRecurringTaskCommands(t *testing.T) {
 	}
 
 	free, _ := NoteParts(o)
-	if strings.Contains(free, "History") || strings.Contains(free, "fumori:") {
+	if strings.Contains(free, "History") || strings.Contains(free, "calepin:") {
 		t.Fatalf("the editor body must not contain history: %q", free)
 	}
 	o, err = v.SaveNote(o.ID, NoteSave{Format: "rich", BaseRevision: o.Revision, BodyMarkdown: free + "\n- check disks"})
-	if err != nil || len(o.Blocks) != 1 || !strings.HasSuffix(strings.TrimSpace(o.Source), "<!-- /fumori:occurrence "+occurrence+" -->") {
+	if err != nil || len(o.Blocks) != 1 || !strings.HasSuffix(strings.TrimSpace(o.Source), "<!-- /calepin:occurrence "+occurrence+" -->") {
 		t.Fatalf("a rich save must keep the history at the end: %v\n%s", err, o.Source)
 	}
 
@@ -216,7 +216,7 @@ func TestRecurringTaskCommands(t *testing.T) {
 		t.Fatal(err)
 	}
 	o, _ = v.Note(o.ID)
-	if o.Task.Occurrence.ID != occurrence || strings.Contains(o.Source, "fumori:occurrence") || strings.Contains(o.Source, "## History") {
+	if o.Task.Occurrence.ID != occurrence || strings.Contains(o.Source, "calepin:occurrence") || strings.Contains(o.Source, "## History") {
 		t.Fatalf("undo must restore the previous occurrence:\n%s", o.Source)
 	}
 }

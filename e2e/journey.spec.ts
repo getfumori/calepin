@@ -5,14 +5,14 @@ import { join } from "node:path";
 
 import { expect, test } from "@playwright/test";
 
-const fumori = join(process.cwd(), "bin", "fumori");
+const calepin = join(process.cwd(), "bin", "calepin");
 
 function startServer(
   vault: string,
   state: string
 ): Promise<{ url: string; child: ChildProcess }> {
   const child = spawn(
-    fumori,
+    calepin,
     ["serve", "--vault", vault, "--state", state, "--port", "0"],
     { stdio: ["ignore", "pipe", "inherit"] }
   );
@@ -36,11 +36,11 @@ test("write Today, capture memos, find notes, and survive a restart", async ({
   page,
   request
 }) => {
-  const root = mkdtempSync(join(tmpdir(), "fumori-e2e-"));
+  const root = mkdtempSync(join(tmpdir(), "calepin-e2e-"));
   const vault = join(root, "vault");
   const state = join(root, "state");
   execFileSync("git", ["init", "-q", vault]);
-  execFileSync(fumori, [
+  execFileSync(calepin, [
     "bootstrap",
     "--vault",
     vault,
@@ -102,8 +102,8 @@ test("write Today, capture memos, find notes, and survive a restart", async ({
     .find((file) => file.endsWith(".md"));
   const source = readFileSync(join(dailyDir, daily!), "utf8");
   expect(source).toContain("今天检查服务器备份。 顺便清理镜像。");
-  expect(source).toMatch(/<!-- fumori:memo \{"id":"m_[0-9A-Z]{12}"/);
-  expect(source).toMatch(/<!-- fumori:comment \{"id":"c_[0-9A-Z]{12}","parent":"m_/);
+  expect(source).toMatch(/<!-- calepin:memo \{"id":"m_[0-9A-Z]{12}"/);
+  expect(source).toMatch(/<!-- calepin:comment \{"id":"c_[0-9A-Z]{12}","parent":"m_/);
   expect(
     execFileSync("git", ["-C", vault, "status", "--porcelain"]).toString()
   ).toBe("");

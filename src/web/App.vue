@@ -294,7 +294,7 @@ async function load(): Promise<void> {
       !note.value.exists ||
       isRichMarkdownRoundTripSafe(note.value.bodyMarkdown);
     editorMode.value = richEditorSafe.value ? "rich" : "protected";
-    document.title = `${displayTitle.value} — Fumori`;
+    document.title = `${displayTitle.value} — Calepin`;
     if (isTodayRoute || note.value.exists) {
       configureAutosave(note.value);
     }
